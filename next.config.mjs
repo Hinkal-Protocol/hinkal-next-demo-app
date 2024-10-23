@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+import withWorkers from '@zeit/next-workers';
+
+const nextConfig = withWorkers({
+  workerLoaderOptions: { inline: true },
+})
 
 export default nextConfig;

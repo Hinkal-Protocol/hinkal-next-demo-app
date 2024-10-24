@@ -1,8 +1,24 @@
 /** @type {import('next').NextConfig} */
-import withWorkers from '@zeit/next-workers';
+import CopyPlugin from "copy-webpack-plugin";
 
-const nextConfig = withWorkers({
-  workerLoaderOptions: { inline: true },
-})
+const nextConfig = {
+  webpack: (
+    config,
+  ) => {
+    // Important: return the modified config
+    return {
+      ...config,
+      plugins: [
+        ...config.plugins || [],
+        new CopyPlugin({
+          patterns: [{
+            from: './node_modules/@hinkal/common/assets',
+            to: './static/media'
+          }],
+        }),
+      ],
+    }
+  },
+}
 
 export default nextConfig;

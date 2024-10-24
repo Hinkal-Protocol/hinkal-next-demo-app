@@ -23,8 +23,6 @@ export const ChooseWallet = ({
   const { connectors } = useConnect();
   const config = useConfig()
 
-  console.log(connectors);
-
   const { hinkal, setChainId } = useAppContext();
 
   const handleSelectConnector = useCallback(

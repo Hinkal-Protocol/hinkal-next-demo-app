@@ -50,7 +50,6 @@ export class ProviderAdapter implements IProviderAdapter {
     const provider = await this.connector.getProvider();
     const account = await this.connector.getAccounts();
 
-    console.log(provider, account)
 
     this.signer = await this.walletClientToSigner({ transport: provider, account: account[0] }, this.chainId!);
   }
@@ -121,7 +120,6 @@ export class ProviderAdapter implements IProviderAdapter {
 
   async getAddress(): Promise<string> {
     const { address } = getAccount(this.config);
-    console.log(getAccount(this.config));
     if (!address) {
       throw new Error('IllegalState');
     }

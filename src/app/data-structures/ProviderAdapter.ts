@@ -12,8 +12,7 @@ import {
   transactionErrorCodes,
 } from '@hinkal/common';
 import { ethers, providers, Signer, utils } from 'ethers';
-import { Connector } from 'wagmi';
-import { type WalletClient } from '@wagmi/core';
+import { Config, Connector } from 'wagmi';
 import { connect, disconnect, getAccount, signMessage, switchChain, watchAccount, watchChainId } from 'wagmi/actions';
 
 export class ProviderAdapter implements IProviderAdapter {
@@ -29,12 +28,12 @@ export class ProviderAdapter implements IProviderAdapter {
 
   private chainEventListener?: ChainEventListener;
 
-  private config?: any;
+  private config: Config;
 
 
   private unsubscribeFns: Array<() => unknown> = [];
 
-  constructor(connector: Connector, config: any) {
+  constructor(connector: Connector, config: Config) {
     this.connector = connector;
     this.config = config;
   }
@@ -43,7 +42,7 @@ export class ProviderAdapter implements IProviderAdapter {
     // init chainId
     if (chainId) this.chainId = chainId;
     // init providers
-    this.originalProvider = await this.connector.getProvider();
+    this.originalProvider = await this.connector.getProvider() as providers.Provider | undefined;
     this.fetchProvider = this.createFetchProvider() ?? this.originalProvider;
     if (this.fetchProvider === this.originalProvider) console.warn('fetchProvider not available');
     // init signer
@@ -89,7 +88,6 @@ export class ProviderAdapter implements IProviderAdapter {
     types: Record<string, ethers.TypedDataField[]>,
     value: Record<string, unknown>,
   ): Promise<string> {
-    // TODO: Avoid type casting
     return (this.signer as providers.JsonRpcSigner)._signTypedData(domain, types, value);
   }
 
@@ -112,7 +110,7 @@ export class ProviderAdapter implements IProviderAdapter {
       return fetchRpcUrl.includes('wss')
         ? new providers.WebSocketProvider(fetchRpcUrl)
         : new providers.StaticJsonRpcProvider(fetchRpcUrl);
-    } catch (err: any) {
+    } catch (err) {
       console.log('create Fetch Provider error', err);
       return undefined;
     }
@@ -238,11 +236,11 @@ export class ProviderAdapter implements IProviderAdapter {
   }
 
   async patchExternalProvider(connector: Connector) {
-    const provider = await connector.getProvider();
-    let externalProvider;
-    if (provider instanceof ethers.providers.Web3Provider) externalProvider = provider.provider;
+    const provider = await connector.getProvider() as providers.Provider | ethers.providers.Web3Provider | undefined;;
+    let externalProvider: providers.Provider | undefined;;
+    if (provider instanceof ethers.providers.Web3Provider) externalProvider = provider;
     else externalProvider = provider;
-    if ('isWalletConnect' in externalProvider) {
+    if (externalProvider && 'isWalletConnect' in externalProvider) {
       const chainId = await connector.getChainId();
       externalProvider.http = externalProvider.setHttpProvider?.(chainId);
     }

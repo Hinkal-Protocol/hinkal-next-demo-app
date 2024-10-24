@@ -1,7 +1,9 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import Image from "next/image";
+
+import HinkalLogo from '../../../assets/HinkalLogo.png';
 import { ChooseWallet } from "../ChooseWallet";
 import { HinkalInfo } from "./HinkalInfo";
-import { useAppContext } from "../../HOC/app";
 
 export const Header = () => {
   // local states
@@ -17,18 +19,18 @@ export const Header = () => {
         setShieldedAddress={setShieldedAddress}
       />
       <div
-        className={`flex ${
-          shieldedAddress ? "flex-col" : ""
-        } md:flex-row justify-between w-[87%] md:w-[81.5%] mx-auto pt-[1%] relative md:static`}
+        className={`flex ${shieldedAddress ? "flex-col" : ""
+          } md:flex-row justify-between w-[87%] md:w-[81.5%] mx-auto pt-[1%] relative md:static`}
       >
         <div className="flex items-center justify-between gap-2.5">
+          <Image src={HinkalLogo} alt="" className="w-9 h-9 md:w-10 md:h-10" />
           <p className="text-[20px] md:text-2xl font-bold text-white font-libFranklin">
             HINKAL
           </p>
         </div>
 
         {shieldedAddress ? (
-          <HinkalInfo shieldedAddress = {shieldedAddress}/>
+          <HinkalInfo shieldedAddress={shieldedAddress} />
         ) : (
           <button
             type="button"

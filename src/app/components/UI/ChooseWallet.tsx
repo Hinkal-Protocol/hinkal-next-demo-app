@@ -1,13 +1,14 @@
 'use client';
-
-import { providers } from "ethers";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { isMobile } from "react-device-detect";
 import { Connector, useConfig, useConnect } from "wagmi";
+import Image from 'next/image'
+
 import { Modal } from "./Modal";
-import { Spinner } from "./Spinner";
 import { ProviderAdapter } from "../../data-structures";
-import { useAppContext } from "../HOC/app";
+import { useAppContext } from "../layouts/app";
+import MetamaskLogo from '../../assets/metamaskWalletLogo.png';
+
 
 interface ChooseWalletProps {
   isOpen: boolean;
@@ -26,7 +27,7 @@ export const ChooseWallet = ({
   const { hinkal, setChainId } = useAppContext();
 
   const handleSelectConnector = useCallback(
-    async (connector: any) => {
+    async (connector: Connector) => {
       const providerAdapter = new ProviderAdapter(connector, config);
       await hinkal.initProviderAdapter(connector, providerAdapter);
       await hinkal.initUserKeys();
@@ -51,7 +52,7 @@ export const ChooseWallet = ({
       stylePropsBg=" bg-[#000000b2] "
       xBtnStyleProps="text-black font-black"
     >
-      <h1 className="font-[500] text-2xl p-5">Select Wallet</h1>
+      <h1 className="font-[500] text-2xl p-5 text-black">Select Wallet</h1>
       <div className="p-5 pb-10 flex flex-col items-center gap-y-5 ">
         {connectors
           .filter((connector) => {
@@ -60,23 +61,19 @@ export const ChooseWallet = ({
           })
           .map((connector) => (
             <button
-              className="bg-modal px-4 py-2 min-w-[180px] w-[80%] rounded-lg border-[2.5px] border-[#f0f0f0] hover:border-[#9c9c9c] font-bold duration-150 flex items-center justify-center gap-x-3"
+              className="bg-modal px-4 py-2 min-w-[180px] w-[80%] rounded-lg border-[2.5px] border-black hover:border-[#9c9c9c] font-bold duration-150 flex items-center justify-center gap-x-3"
               type="button"
               key={connector.id}
               onClick={() => handleSelectConnector(connector)}
             >
-              {connector.name === "Coinbase Wallet" && (
-                <span>Coinbase</span>
-              )}
               {connector.name === "MetaMask" && (
-                <span>MetaMask</span>
-
+                <Image
+                  src={MetamaskLogo}
+                  alt="Logo"
+                  className="w-[26px] h-[26px]"
+                />
               )}
-              {connector.name === "WalletConnect" && (
-                <span>WalletConnect</span>
-
-              )}
-              <span>{connector.name}</span>
+              <span className="text-black">{connector.name}</span>
             </button>
           ))}
       </div>

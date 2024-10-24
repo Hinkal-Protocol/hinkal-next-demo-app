@@ -1,4 +1,7 @@
 import { Popover } from "@headlessui/react";
+import Image from "next/image";
+
+import VectorDown from "../../../../assets/VectorDown.svg";
 import { WalletInfoDropDown } from "../WalletInfoDropDown";
 import { shortenAddress } from "../../../../utils/shortenAddress";
 
@@ -21,7 +24,7 @@ export const WalletSettingsBody = ({
         <span>{shortenAddress(shieldedAddress ?? "")}</span>
 
         <div className={`hidden min-[375px]:block ${open ? "rotate-180" : ""}`}>
-          Down
+          <Image src={VectorDown} alt={""} />
         </div>
       </Popover.Button>
       <Popover.Panel className="md:relative z-20">

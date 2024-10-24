@@ -1,7 +1,7 @@
 import { NetworkDropdownItem } from "./NetworkDropdownItem";
 import { useCallback, useMemo } from "react";
 import { networkRegistry } from "@hinkal/common";
-import { useAppContext } from "../../../../HOC/app";
+import { useAppContext } from "../../../../layouts/app";
 
 interface NetworkSettingsDropdownProps {
   close: () => void;

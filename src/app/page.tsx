@@ -1,11 +1,10 @@
-"use client"
+"use client";
 import { SyntheticEvent, useCallback, useState } from "react";
-import { chainIds, getERC20Registry, getAmountInWei } from "@hinkal/common";
+import { chainIds, getERC20Registry, getAmountInWei } from "@sabaaa1/common";
 import { useAppContext, AppContextProvider } from "./components/layouts/app";
-import { TokenAmountInput } from './components/UI/TokenAmountInput';
-import { Spinner } from './components/UI/Spinner';
-import { Header } from './components/UI/Header';
-
+import { TokenAmountInput } from "./components/UI/TokenAmountInput";
+import { Spinner } from "./components/UI/Spinner";
+import { Header } from "./components/UI/Header";
 
 const DemoPage = () => {
   const { hinkal } = useAppContext();
@@ -16,11 +15,10 @@ const DemoPage = () => {
   const [depositAmount, setDepositAmount] = useState<string>("");
 
   const handleDeposit = useCallback(async () => {
-    console.log('deposit');
-    const erc20addresses = [selectedToken.erc20TokenAddress];
+    console.log("deposit");
     const amountChanges = [getAmountInWei(selectedToken, depositAmount)];
     try {
-      await hinkal.deposit?.(erc20addresses, amountChanges);
+      await hinkal.deposit?.([selectedToken], amountChanges);
     } catch (err) {
       console.log("deposit error", { err });
     }
@@ -48,10 +46,11 @@ const DemoPage = () => {
               type="submit"
               disabled={!hinkal?.deposit || false}
               onClick={handleDeposit}
-              className={`w-[90%] ml-[5%] mb-3 md:mx-[5%] rounded-lg h-10 text-sm font-semibold outline-none ${true
-                ? "bg-primary text-white hover:bg-[#4d32fa] duration-200"
-                : "bg-[#37363d] text-[#848688] cursor-not-allowed"
-                } `}
+              className={`w-[90%] ml-[5%] mb-3 md:mx-[5%] rounded-lg h-10 text-sm font-semibold outline-none ${
+                true
+                  ? "bg-primary text-white hover:bg-[#4d32fa] duration-200"
+                  : "bg-[#37363d] text-[#848688] cursor-not-allowed"
+              } `}
             >
               {false ? (
                 <div className="mx-[5%] flex items-center justify-center gap-x-2">

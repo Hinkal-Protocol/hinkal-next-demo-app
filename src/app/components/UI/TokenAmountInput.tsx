@@ -1,8 +1,7 @@
 import { Listbox } from "@headlessui/react";
-import { ERC20Token } from "@hinkal/common";
+import { ERC20Token } from "@sabaaa1/common";
 import { SetStateAction, useEffect } from "react";
-import Image from 'next/image'
-
+import Image from "next/image";
 
 import { useAppContext } from "../layouts/app";
 import VectorDown from "../../assets/VectorDown.svg";
@@ -41,7 +40,8 @@ export const TokenAmountInput = ({
     }
   };
 
-  if (!erc20List.length) return <div className="p-6">Please Connect your walet before deposit</div>;
+  if (!erc20List.length)
+    return <div className="p-6">Please Connect your walet before deposit</div>;
 
   return (
     <div className="flex flex-col item-center justify-center">
@@ -59,9 +59,11 @@ export const TokenAmountInput = ({
           {({ open }) => (
             <>
               <Listbox.Button
-                className={`h-10 px-2 md:px-0 text-white bg-[#353945] rounded-l-lg ${open ? "rounded-l-[0px] rounded-tl-lg" : ""
-                  } outline-none flex items-center justify-center gap-x-2 w-full ${true ? "cursor-pointer" : "cursor-not-allowed"
-                  } `}
+                className={`h-10 px-2 md:px-0 text-white bg-[#353945] rounded-l-lg ${
+                  open ? "rounded-l-[0px] rounded-tl-lg" : ""
+                } outline-none flex items-center justify-center gap-x-2 w-full ${
+                  true ? "cursor-pointer" : "cursor-not-allowed"
+                } `}
               >
                 <div className="w-[60px] relative flex h-[25px]">
                   {selectedToken?.logoURI && (
@@ -87,9 +89,11 @@ export const TokenAmountInput = ({
                   <Listbox.Option
                     key={token.name + token.erc20TokenAddress}
                     value={token}
-                    className={`cursor-pointer py-2 flex items-center gap-x-2 pl-[8px] ${token?.name === selectedToken?.name ? "bg-[#64717d]" : ""
-                      } ${index === erc20List.length - 1 ? " rounded-b-lg" : ""
-                      }  `}
+                    className={`cursor-pointer py-2 flex items-center gap-x-2 pl-[8px] ${
+                      token?.name === selectedToken?.name ? "bg-[#64717d]" : ""
+                    } ${
+                      index === erc20List.length - 1 ? " rounded-b-lg" : ""
+                    }  `}
                   >
                     <div className="w-[26px] relative flex h-[25px]">
                       {token?.logoURI && (
@@ -113,8 +117,9 @@ export const TokenAmountInput = ({
           type="text"
           id="totalAmount"
           placeholder="Token amount"
-          className={`bg-[#272B30] h-10 w-[50%] min-[375px]:w-[60%] lg:w-[65%] text-white text-[14px] rounded-r-lg pl-[15px] outline-none ${true ? "" : "cursor-not-allowed"
-            } `}
+          className={`bg-[#272B30] h-10 w-[50%] min-[375px]:w-[60%] lg:w-[65%] text-white text-[14px] rounded-r-lg pl-[15px] outline-none ${
+            true ? "" : "cursor-not-allowed"
+          } `}
           disabled={false}
           onChange={(event) => setTokenAmountHandler(event)}
           value={tokenAmount}

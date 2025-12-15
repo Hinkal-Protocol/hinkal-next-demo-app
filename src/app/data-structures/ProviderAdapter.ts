@@ -1,4 +1,4 @@
-import { TransactionRequest } from '@ethersproject/providers';
+import { TransactionRequest } from "@ethersproject/providers";
 import {
   ChainEventListener,
   chainIds,
@@ -10,12 +10,20 @@ import {
   localhostNetwork,
   networkRegistry,
   transactionErrorCodes,
-} from '@hinkal/common';
-import { ethers, providers, Signer, utils } from 'ethers';
-import { Config, Connector } from 'wagmi';
-import { connect, disconnect, getAccount, signMessage, switchChain, watchAccount, watchChainId } from 'wagmi/actions';
+} from "@sabaaa1/common";
+import { ethers, providers, Signer, utils } from "ethers";
+import { Config, Connector } from "wagmi";
+import {
+  connect,
+  disconnect,
+  getAccount,
+  signMessage,
+  switchChain,
+  watchAccount,
+  watchChainId,
+} from "wagmi/actions";
 
-export class ProviderAdapter implements IProviderAdapter {
+export class ProviderAdapter implements IProviderAdapter<Connector> {
   private connector: Connector;
 
   public chainId: number | undefined;
@@ -30,7 +38,6 @@ export class ProviderAdapter implements IProviderAdapter {
 
   private config: Config;
 
-
   private unsubscribeFns: Array<() => unknown> = [];
 
   constructor(connector: Connector, config: Config) {
@@ -38,19 +45,41 @@ export class ProviderAdapter implements IProviderAdapter {
     this.config = config;
   }
 
+  initConnector(connector: Connector): void {
+    this.connector = connector;
+  }
+
+  getSigner(): Signer {
+    if (!this.signer) {
+      throw new Error("IllegalState: signer not initialized");
+    }
+    return this.signer;
+  }
+
+  async switchAccount(signer: ethers.Signer): Promise<void> {
+    await this.disconnectFromConnector();
+    const chainId = await this.connectAndPatchProvider(this.connector);
+    await this.init(chainId);
+  }
+
   async init(chainId?: number) {
     // init chainId
     if (chainId) this.chainId = chainId;
     // init providers
-    this.originalProvider = await this.connector.getProvider() as providers.Provider | undefined;
+    this.originalProvider = (await this.connector.getProvider()) as
+      | providers.Provider
+      | undefined;
     this.fetchProvider = this.createFetchProvider() ?? this.originalProvider;
-    if (this.fetchProvider === this.originalProvider) console.warn('fetchProvider not available');
+    if (this.fetchProvider === this.originalProvider)
+      console.warn("fetchProvider not available");
     // init signer
     const provider = await this.connector.getProvider();
     const account = await this.connector.getAccounts();
 
-
-    this.signer = await this.walletClientToSigner({ transport: provider, account: account[0] }, this.chainId!);
+    this.signer = await this.walletClientToSigner(
+      { transport: provider, account: account[0] },
+      this.chainId!
+    );
   }
 
   async disconnectFromConnector() {
@@ -65,13 +94,19 @@ export class ProviderAdapter implements IProviderAdapter {
       const connectResult = await connect(this.config, { connector });
       return connectResult.chainId;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       throw new Error(transactionErrorCodes.CONNECTION_FAILED); // for a consistent error message
     }
   }
 
-  async waitForTransaction(transactionHash: string, confirmations: number): Promise<boolean> {
-    const txReceipt = await this.fetchProvider?.waitForTransaction(transactionHash, confirmations);
+  async waitForTransaction(
+    transactionHash: string,
+    confirmations: number
+  ): Promise<boolean> {
+    const txReceipt = await this.fetchProvider?.waitForTransaction(
+      transactionHash,
+      confirmations
+    );
     if (txReceipt?.status) return true;
     throw Error(transactionErrorCodes.TRANSACTION_NOT_CONFIRMED);
   }
@@ -79,25 +114,34 @@ export class ProviderAdapter implements IProviderAdapter {
   async signMessage(message: string): Promise<string> {
     const signature = await signMessage(this.config, { message });
     if (!signature) throw new Error(transactionErrorCodes.SIGNING_FAILED); // coinbase wallet returns undefined in some cases.
-    if (signature.includes('error')) throw new Error(transactionErrorCodes.SIGNATURE_UNSUPPORTED_PERSONAL_SIGN);
+    if (signature.includes("error"))
+      throw new Error(
+        transactionErrorCodes.SIGNATURE_UNSUPPORTED_PERSONAL_SIGN
+      );
     return signature;
   }
 
   async signTypedData(
     domain: ethers.TypedDataDomain,
     types: Record<string, ethers.TypedDataField[]>,
-    value: Record<string, unknown>,
+    value: Record<string, unknown>
   ): Promise<string> {
-    return (this.signer as providers.JsonRpcSigner)._signTypedData(domain, types, value);
+    return (this.signer as providers.JsonRpcSigner)._signTypedData(
+      domain,
+      types,
+      value
+    );
   }
 
   getSelectedNetwork = (): EthereumNetwork | undefined => {
-    if (!this.chainId) throw new Error('Illegal state: no chaindId');
+    if (!this.chainId) throw new Error("Illegal state: no chaindId");
     return networkRegistry[this.chainId];
   };
 
   async switchNetwork(network: EthereumNetwork) {
-    return switchChain(this.config, { chainId: network.chainId as 1 | 137 | 56 | 42161 | 10 | 43114 | 31337 });
+    return switchChain(this.config, {
+      chainId: network.chainId as 1 | 137 | 56 | 42161 | 10 | 43114 | 31337,
+    });
   }
 
   private createFetchProvider() {
@@ -107,11 +151,11 @@ export class ProviderAdapter implements IProviderAdapter {
       if (!fetchRpcUrl) {
         return undefined;
       }
-      return fetchRpcUrl.includes('wss')
+      return fetchRpcUrl.includes("wss")
         ? new providers.WebSocketProvider(fetchRpcUrl)
         : new providers.StaticJsonRpcProvider(fetchRpcUrl);
     } catch (err) {
-      console.log('create Fetch Provider error', err);
+      console.log("create Fetch Provider error", err);
       return undefined;
     }
   }
@@ -119,7 +163,7 @@ export class ProviderAdapter implements IProviderAdapter {
   async getAddress(): Promise<string> {
     const { address } = getAccount(this.config);
     if (!address) {
-      throw new Error('IllegalState');
+      throw new Error("IllegalState");
     }
     return utils.getAddress(address);
   }
@@ -132,25 +176,25 @@ export class ProviderAdapter implements IProviderAdapter {
         watchAccount(this.config, {
           onChange: () => {
             if (!this.chainEventListener) {
-              console.warn('chainEventListener is not set');
+              console.warn("chainEventListener is not set");
               return;
             }
-            console.log('Account changed');
+            console.log("Account changed");
             this.chainEventListener.onAccountChanged();
           },
-        }),
+        })
       );
       this.unsubscribeFns.push(
         watchChainId(this.config, {
           onChange: (chainId) => {
             if (!this.chainEventListener) {
-              console.warn('chainEventListener is not set');
+              console.warn("chainEventListener is not set");
               return;
             }
-            console.log('Chain ID changed!', chainId);
-            this.chainEventListener.onChainChanged(chainId)
+            console.log("Chain ID changed!", chainId);
+            this.chainEventListener.onChainChanged(chainId);
           },
-        }),
+        })
       );
     }
   }
@@ -172,11 +216,14 @@ export class ProviderAdapter implements IProviderAdapter {
     this.unsubscribeFns = [];
   }
 
-  getContractMetadata(contractType: ContractType, chainId?: number): ContractMetadata {
+  getContractMetadata(
+    contractType: ContractType,
+    chainId?: number
+  ): ContractMetadata {
     const resultChainId = chainId ?? this.chainId;
 
     if (!resultChainId) {
-      throw new Error('No chainId provided in context');
+      throw new Error("No chainId provided in context");
     }
     const network = networkRegistry[resultChainId];
     if (!network) {
@@ -189,46 +236,71 @@ export class ProviderAdapter implements IProviderAdapter {
     return getContractMetadataFn(network.contractData);
   }
 
-  getContract(contractType: ContractType, contractAddress = undefined, chainId?: number): ethers.Contract {
-    const contractMetadata: ContractMetadata = this.getContractMetadata(contractType, chainId);
+  getContract(
+    contractType: ContractType,
+    contractAddress = undefined,
+    chainId?: number
+  ): ethers.Contract {
+    const contractMetadata: ContractMetadata = this.getContractMetadata(
+      contractType,
+      chainId
+    );
     if (!contractMetadata.abi) {
       throw new Error(`No ABI configured for contractType: ${contractType}`);
     }
     if (contractMetadata.address && contractAddress) {
-      throw new Error(`Overriding address is not supported for contractType: ${contractType}`);
+      throw new Error(
+        `Overriding address is not supported for contractType: ${contractType}`
+      );
     }
     const resultContractAddress = contractMetadata.address ?? contractAddress;
     if (!resultContractAddress) {
-      throw new Error(`No contractAddress configured for contractType: ${contractType}`);
+      throw new Error(
+        `No contractAddress configured for contractType: ${contractType}`
+      );
     }
     return new ethers.Contract(resultContractAddress, contractMetadata.abi);
   }
 
-  getContractWithSigner(contract: ContractType, contractAddress = undefined): ethers.Contract {
-    if (!this.signer) throw new Error('IllegalState: no signer');
+  getContractWithSigner(
+    contract: ContractType,
+    contractAddress = undefined
+  ): ethers.Contract {
+    if (!this.signer) throw new Error("IllegalState: no signer");
 
     return this.getContract(contract, contractAddress).connect(this.signer);
   }
 
-  getContractWithFetcher(contract: ContractType, contractAddress = undefined): ethers.Contract {
-    if (!this.fetchProvider) throw new Error('fetchProvider not initialized');
+  getContractWithFetcher(
+    contract: ContractType,
+    contractAddress = undefined
+  ): ethers.Contract {
+    if (!this.fetchProvider) throw new Error("fetchProvider not initialized");
 
-    return this.getContract(contract, contractAddress).connect(this.fetchProvider);
+    return this.getContract(contract, contractAddress).connect(
+      this.fetchProvider
+    );
   }
 
-  getContractWithFetcherForEthereum(contract: ContractType, contractAddress = undefined): ethers.Contract {
+  getContractWithFetcherForEthereum(
+    contract: ContractType,
+    contractAddress = undefined
+  ): ethers.Contract {
     const chainIdForRpcUrl =
-      this.chainId === chainIds.localhost && localhostNetwork === chainIds.ethMainnet
+      this.chainId === chainIds.localhost &&
+      localhostNetwork === chainIds.ethMainnet
         ? chainIds.localhost
         : chainIds.ethMainnet;
 
     return this.getContract(contract, contractAddress).connect(
-      new ethers.providers.StaticJsonRpcProvider(networkRegistry[chainIdForRpcUrl].fetchRpcUrl),
+      new ethers.providers.StaticJsonRpcProvider(
+        networkRegistry[chainIdForRpcUrl].fetchRpcUrl
+      )
     );
   }
 
   async sendTransaction(tx: TransactionRequest) {
-    if (!this.signer) throw new Error('IllegalState: no signer');
+    if (!this.signer) throw new Error("IllegalState: no signer");
 
     const resp = await this.signer.sendTransaction(tx);
 
@@ -236,11 +308,15 @@ export class ProviderAdapter implements IProviderAdapter {
   }
 
   async patchExternalProvider(connector: Connector) {
-    const provider = await connector.getProvider() as providers.Provider | ethers.providers.Web3Provider | undefined;;
-    let externalProvider: providers.Provider | undefined;;
-    if (provider instanceof ethers.providers.Web3Provider) externalProvider = provider;
+    const provider = (await connector.getProvider()) as
+      | providers.Provider
+      | ethers.providers.Web3Provider
+      | undefined;
+    let externalProvider: providers.Provider | undefined;
+    if (provider instanceof ethers.providers.Web3Provider)
+      externalProvider = provider;
     else externalProvider = provider;
-    if (externalProvider && 'isWalletConnect' in externalProvider) {
+    if (externalProvider && "isWalletConnect" in externalProvider) {
       const chainId = await connector.getChainId();
       externalProvider.http = externalProvider.setHttpProvider?.(chainId);
     }
@@ -259,7 +335,7 @@ export class ProviderAdapter implements IProviderAdapter {
 
   async getGasPrice(): Promise<bigint> {
     const price = await this.fetchProvider?.getGasPrice();
-    if (!price) throw Error('Could not fetch gas price in getGasPrice');
+    if (!price) throw Error("Could not fetch gas price in getGasPrice");
     return price.toBigInt();
   }
 
@@ -267,7 +343,7 @@ export class ProviderAdapter implements IProviderAdapter {
     const { account, transport } = walletClient;
     const network = {
       chainId,
-      name: '',
+      name: "",
     };
     const provider = new providers.Web3Provider(transport, network);
     const signer = provider.getSigner(account);

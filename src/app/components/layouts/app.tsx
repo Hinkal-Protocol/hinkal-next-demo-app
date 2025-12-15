@@ -5,7 +5,8 @@ import {
   Hinkal,
   getERC20Registry,
   networkRegistry,
-} from "@hinkal/common";
+  preProcessing,
+} from "@sabaaa1/common";
 import {
   FC,
   ReactNode,
@@ -16,8 +17,7 @@ import {
   useState,
 } from "react";
 import { Connector, WagmiProvider } from "wagmi";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { preProcessing } from "@hinkal/common";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { getWagmiConfig } from "../../configs/wagmi.config";
 
@@ -33,7 +33,7 @@ type AppContextProps = { children: ReactNode };
 
 preProcessing();
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 const hinkalInstance = new Hinkal<Connector>();
 
 const AppContext = createContext<AppContextArgumnets>({
@@ -44,7 +44,6 @@ const AppContext = createContext<AppContextArgumnets>({
   setSelectedNetwork: (net: EthereumNetwork) => net,
   erc20List: [],
 });
-
 
 export const AppContextProvider: FC<AppContextProps> = ({
   children,

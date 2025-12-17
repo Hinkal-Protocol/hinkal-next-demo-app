@@ -23,6 +23,17 @@ import {
   watchChainId,
 } from "wagmi/actions";
 
+interface WalletConnectProvider extends providers.Provider {
+  isWalletConnect: boolean;
+  setHttpProvider?: (chainId: number) => unknown;
+  http?: unknown;
+}
+
+interface WalletClient {
+  account: string;
+  transport: providers.ExternalProvider | providers.JsonRpcFetchFunc;
+}
+
 export class ProviderAdapter implements IProviderAdapter<Connector> {
   private connector: Connector;
 
@@ -56,7 +67,7 @@ export class ProviderAdapter implements IProviderAdapter<Connector> {
     return this.signer;
   }
 
-  async switchAccount(signer: ethers.Signer): Promise<void> {
+  async switchAccount(): Promise<void> {
     await this.disconnectFromConnector();
     const chainId = await this.connectAndPatchProvider(this.connector);
     await this.init(chainId);
@@ -77,7 +88,12 @@ export class ProviderAdapter implements IProviderAdapter<Connector> {
     const account = await this.connector.getAccounts();
 
     this.signer = await this.walletClientToSigner(
-      { transport: provider, account: account[0] },
+      {
+        transport: provider as
+          | providers.ExternalProvider
+          | providers.JsonRpcFetchFunc,
+        account: account[0],
+      },
       this.chainId!
     );
   }
@@ -317,8 +333,9 @@ export class ProviderAdapter implements IProviderAdapter<Connector> {
       externalProvider = provider;
     else externalProvider = provider;
     if (externalProvider && "isWalletConnect" in externalProvider) {
+      const wcProvider = externalProvider as WalletConnectProvider;
       const chainId = await connector.getChainId();
-      externalProvider.http = externalProvider.setHttpProvider?.(chainId);
+      wcProvider.http = wcProvider.setHttpProvider?.(chainId);
     }
   }
 
@@ -339,7 +356,7 @@ export class ProviderAdapter implements IProviderAdapter<Connector> {
     return price.toBigInt();
   }
 
-  async walletClientToSigner(walletClient: any, chainId: number) {
+  async walletClientToSigner(walletClient: WalletClient, chainId: number) {
     const { account, transport } = walletClient;
     const network = {
       chainId,

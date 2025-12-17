@@ -5,30 +5,30 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: '**',
-        port: '',
-        pathname: '**',
+        protocol: "https",
+        hostname: "**",
+        port: "",
+        pathname: "**",
       },
     ],
   },
-  webpack: (
-    config,
-  ) => {
+  webpack: (config) => {
     return {
       ...config,
       // Important this plugins update required for correct @hinkal/common work
       plugins: [
-        ...config.plugins || [],
+        ...(config.plugins || []),
         new CopyPlugin({
-          patterns: [{
-            from: './node_modules/@hinkal/common/assets/*.js',
-            to: './static/media/[name].js'
-          }],
+          patterns: [
+            {
+              from: "./node_modules/@sabaaa1/common/assets/*.js",
+              to: "./static/media/[name].js",
+            },
+          ],
         }),
       ],
-    }
+    };
   },
-}
+};
 
 export default nextConfig;

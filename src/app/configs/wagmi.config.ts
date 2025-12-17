@@ -1,8 +1,15 @@
-'use client';
-import { arbitrum, avalanche, bsc, hardhat, mainnet, optimism, polygon } from 'wagmi/chains';
-import { http, createConfig } from 'wagmi';
-import { metaMask } from '@wagmi/connectors'
-
+"use client";
+import {
+  arbitrum,
+  avalanche,
+  bsc,
+  hardhat,
+  mainnet,
+  optimism,
+  polygon,
+} from "wagmi/chains";
+import { http, createConfig } from "wagmi";
+import { metaMask } from "@wagmi/connectors";
 
 export const getWagmiConfig = () => {
   return createConfig({

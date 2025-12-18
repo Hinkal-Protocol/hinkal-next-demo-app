@@ -1,4 +1,4 @@
-import { Listbox } from "@headlessui/react";
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 import { ERC20Token } from "@sabaaa1/common";
 import { SetStateAction, useEffect } from "react";
 import Image from "next/image";
@@ -58,7 +58,7 @@ export const TokenAmountInput = ({
         >
           {({ open }) => (
             <>
-              <Listbox.Button
+              <ListboxButton
                 className={`h-10 px-2 md:px-0 text-white bg-[#353945] rounded-l-lg ${
                   open ? "rounded-l-[0px] rounded-tl-lg" : ""
                 } outline-none flex items-center justify-center gap-x-2 w-full ${
@@ -83,10 +83,10 @@ export const TokenAmountInput = ({
                     <Image src={VectorDown} alt={""} />
                   </div>
                 )}
-              </Listbox.Button>
-              <Listbox.Options className="absolute w-full top-10 text-white flex flex-col bg-[#272B30] rounded-b-lg z-20">
+              </ListboxButton>
+              <ListboxOptions className="absolute w-full top-10 text-white flex flex-col bg-[#272B30] rounded-b-lg z-20">
                 {erc20List.map((token, index) => (
-                  <Listbox.Option
+                  <ListboxOption
                     key={token.name + token.erc20TokenAddress}
                     value={token}
                     className={`cursor-pointer py-2 flex items-center gap-x-2 pl-[8px] ${
@@ -106,9 +106,9 @@ export const TokenAmountInput = ({
                       )}
                     </div>{" "}
                     <span>{token?.symbol}</span>
-                  </Listbox.Option>
+                  </ListboxOption>
                 ))}
-              </Listbox.Options>
+              </ListboxOptions>
             </>
           )}
         </Listbox>

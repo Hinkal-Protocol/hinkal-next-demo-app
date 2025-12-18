@@ -22,7 +22,7 @@ const DemoPage = () => {
     } catch (err) {
       console.log("deposit error", { err });
     }
-  }, [hinkal.deposit, depositAmount, selectedToken]);
+  }, [selectedToken, depositAmount, hinkal]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();

@@ -22,7 +22,7 @@ export const NetworkSettingsDropdown = ({
         close();
       }
     },
-    [networkList]
+    [close, hinkal, networkList, setChainId]
   );
 
   return (
@@ -30,7 +30,6 @@ export const NetworkSettingsDropdown = ({
       {networkList.map(({ chainId, name }, index) => (
         <div key={chainId} className="w-full">
           <NetworkDropdownItem
-            chainId={chainId}
             logoPath={""}
             networkName={name}
             onSelect={() => switchNetwork?.(chainId)}

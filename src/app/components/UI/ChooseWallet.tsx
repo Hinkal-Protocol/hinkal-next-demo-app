@@ -1,14 +1,13 @@
-'use client';
+"use client";
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { isMobile } from "react-device-detect";
 import { Connector, useConfig, useConnect } from "wagmi";
-import Image from 'next/image'
+import Image from "next/image";
 
 import { Modal } from "./Modal";
 import { ProviderAdapter } from "../../data-structures";
 import { useAppContext } from "../layouts/app";
-import MetamaskLogo from '../../assets/metamaskWalletLogo.png';
-
+import MetamaskLogo from "../../assets/metamaskWalletLogo.png";
 
 interface ChooseWalletProps {
   isOpen: boolean;
@@ -22,7 +21,7 @@ export const ChooseWallet = ({
   setShieldedAddress,
 }: ChooseWalletProps) => {
   const { connectors } = useConnect();
-  const config = useConfig()
+  const config = useConfig();
 
   const { hinkal, setChainId } = useAppContext();
 
@@ -40,7 +39,7 @@ export const ChooseWallet = ({
       console.log("new hinkal", { hinkal });
       onHide();
     },
-    [config]
+    [config, hinkal, onHide, setChainId, setShieldedAddress]
   );
 
   return (

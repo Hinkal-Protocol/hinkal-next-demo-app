@@ -1,29 +1,33 @@
-"use client";
-import {
-  arbitrum,
-  avalanche,
-  bsc,
-  hardhat,
-  mainnet,
-  optimism,
-  polygon,
-} from "wagmi/chains";
 import { http, createConfig } from "wagmi";
-import { metaMask } from "@wagmi/connectors";
+import { metaMask, coinbaseWallet, walletConnect } from "wagmi/connectors";
+import { networkRegistry } from "@sabaaa1/common";
+import {
+  mainnet,
+  polygon,
+  bsc,
+  arbitrum,
+  optimism,
+  avalanche,
+} from "wagmi/chains";
 
-export const getWagmiConfig = () => {
+const chains = [mainnet, polygon, bsc, arbitrum, optimism, avalanche] as const;
+
+export const wagmiConfig = (() => {
+  const transports = chains.reduce((acc, chain) => {
+    const networkData = networkRegistry[chain.id];
+    acc[chain.id] = http(networkData?.fetchRpcUrl || undefined);
+    return acc;
+  }, {} as Record<number, ReturnType<typeof http>>);
+
   return createConfig({
-    ssr: true,
-    chains: [mainnet, polygon, bsc, arbitrum, optimism, avalanche, hardhat],
-    connectors: [metaMask()],
-    transports: {
-      [mainnet.id]: http(),
-      [polygon.id]: http(),
-      [bsc.id]: http(),
-      [arbitrum.id]: http(),
-      [optimism.id]: http(),
-      [avalanche.id]: http(),
-      [hardhat.id]: http(),
-    },
+    chains: chains,
+    connectors: [
+      metaMask(),
+      coinbaseWallet({ appName: "Your App Name" }),
+      walletConnect({
+        projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
+      }),
+    ],
+    transports,
   });
-};
+})();

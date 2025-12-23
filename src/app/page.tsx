@@ -1,68 +1,35 @@
 "use client";
-import { SyntheticEvent, useCallback, useState } from "react";
-import { chainIds, getERC20Registry, getAmountInWei } from "@sabaaa1/common";
-import { useAppContext, AppContextProvider } from "./components/layouts/app";
-import { TokenAmountInput } from "./components/UI/TokenAmountInput";
-import { Spinner } from "./components/UI/Spinner";
+import { useState } from "react";
+import { Toaster } from "react-hot-toast";
+import { AppContextProvider } from "./components/layouts/app";
 import { Header } from "./components/UI/Header";
+import { AppTab } from "@/types/tabs";
+import { NavigationBar } from "./components/UI/NavigationBar/NavigationBar";
+import { Deposit } from "./components/UI/pages/Deposit";
+import { Transfer } from "./components/UI/pages/Transfer";
+import { Withdraw } from "./components/UI/pages/Withdraw";
+import { Swap } from "./components/UI/pages/Swap";
 
 const DemoPage = () => {
-  const { hinkal } = useAppContext();
-
-  const [selectedToken, setSelectedToken] = useState(
-    getERC20Registry(chainIds.polygon)[0]
-  );
-  const [depositAmount, setDepositAmount] = useState<string>("");
-
-  const handleDeposit = useCallback(async () => {
-    console.log("deposit");
-    const amountChanges = [getAmountInWei(selectedToken, depositAmount)];
-    try {
-      await hinkal.deposit?.([selectedToken], amountChanges);
-    } catch (err) {
-      console.log("deposit error", { err });
-    }
-  }, [selectedToken, depositAmount, hinkal]);
-
-  const handleSubmit = (event: SyntheticEvent) => {
-    event.preventDefault();
-  };
+  const [activeTab, setActiveTab] = useState(AppTab.Deposit);
 
   return (
     <AppContextProvider>
-      <Header />
-      <div className="flex w-full h-full justify-center">
-        <form className="rounded-lg" onSubmit={handleSubmit}>
-          <TokenAmountInput
-            buttonWrapperStyles="!mb-0"
-            tokenAmount={depositAmount}
-            setTokenAmount={setDepositAmount}
-            selectedToken={selectedToken}
-            setSelectedToken={setSelectedToken}
-          />
-          <div className="w-[90%] mx-auto mb-6 mt-6 h-[1px] bg-[#272B30]" />
-          <div className="border-solid">
-            <button
-              type="submit"
-              disabled={!hinkal?.deposit || false}
-              onClick={handleDeposit}
-              className={`w-[90%] ml-[5%] mb-3 md:mx-[5%] rounded-lg h-10 text-sm font-semibold outline-none ${
-                true
-                  ? "bg-primary text-white hover:bg-[#4d32fa] duration-200"
-                  : "bg-[#37363d] text-[#848688] cursor-not-allowed"
-              } `}
-            >
-              {false ? (
-                <div className="mx-[5%] flex items-center justify-center gap-x-2">
-                  <span>Depositing</span> <Spinner />{" "}
-                </div>
-              ) : (
-                <span>Deposit</span>
-              )}
-            </button>
-          </div>
-        </form>
+      <div className="bg-bgColor min-h-screen font-pubsans">
+        <Header />
+        <div className="flex justify-center">
+          <section className="bg-modalBgColor rounded-xl w-[87%] md:w-[40%] min-w-[300px] md:mt-[120px] md:h-fit mx-auto pt-2">
+            <NavigationBar activeTab={activeTab} setActiveTab={setActiveTab} />
+            <div className="px-2">
+              {activeTab === AppTab.Deposit && <Deposit />}
+              {activeTab === AppTab.Transfer && <Transfer />}
+              {activeTab === AppTab.Withdraw && <Withdraw />}
+              {activeTab === AppTab.Swap && <Swap />}
+            </div>
+          </section>
+        </div>
       </div>
+      <Toaster />
     </AppContextProvider>
   );
 };

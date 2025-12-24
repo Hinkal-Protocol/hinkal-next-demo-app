@@ -80,11 +80,11 @@ export const ChooseWallet = ({
       xBtn
       xBtnAction={onHide}
       isOpen={isOpen}
-      styleProps="md:w-[30%] md:ml-[5%] !bg-white rounded-[10px]"
+      styleProps="md:w-[30%] md:ml-[5%] !bg-white rounded-[10px] mt-[-5%]"
       stylePropsBg="bg-[#000000b2]"
       xBtnStyleProps="text-black font-black"
     >
-      <h1 className="font-[500] text-2xl p-5">Select Wallet</h1>
+      <h1 className="font-[500] text-2xl p-5 text-black">Select Wallet</h1>
       <div className="p-5 pb-10 flex flex-col items-center gap-y-5">
         {connectors
           .filter((connector) =>
@@ -94,7 +94,7 @@ export const ChooseWallet = ({
             const logo = getConnectorLogo(connector.name);
             return (
               <button
-                className="bg-modal px-4 py-2 min-w-[180px] w-[80%] rounded-lg border-[2.5px] border-[#f0f0f0] hover:border-[#9c9c9c] font-bold duration-150 flex items-center justify-center gap-x-3"
+                className="bg-modal px-4 py-2 min-w-[180px] w-[80%] rounded-lg border-[2.5px] border-[#f0f0f0] hover:border-[#9c9c9c] font-bold duration-150 flex items-center justify-center gap-x-3 text-black"
                 type="button"
                 disabled={!!connectingId}
                 key={connector.id}
@@ -108,7 +108,7 @@ export const ChooseWallet = ({
                     height={26}
                   />
                 )}
-                <span>{connector.name}</span>
+                <span className="text-black">{connector.name}</span>
                 {connectingId === connector.id && <Spinner />}
               </button>
             );

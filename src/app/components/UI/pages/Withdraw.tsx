@@ -43,11 +43,17 @@ export const Withdraw = () => {
 
   useEffect(() => {
     const fetchAddress = async () => {
-      if (hinkal) {
+      if (!hinkal) return;
+
+      try {
         const addr = await hinkal.getEthereumAddress();
         setRecipientAddress(addr);
+      } catch (err: unknown) {
+        console.warn("Hinkal provider not ready yet:", err);
+        setRecipientAddress("");
       }
     };
+
     fetchAddress();
   }, [hinkal]);
 

@@ -1,7 +1,6 @@
 import { ERC20Token } from "@sabaaa1/common";
 import { useState } from "react";
 import Image from "next/image";
-import VectorDown from "../../../assets/VectorDown.svg";
 import { TokenDropdown } from "./TokenDropdown";
 
 interface SelectTokenProps {
@@ -46,7 +45,12 @@ export const SelectToken = ({
           )}
         </span>
         <div className={`px-1 ${isTokenSelectShown ? "rotate-180" : ""}`}>
-          <Image src={VectorDown} alt="dropdown arrow" width={12} height={12} />
+          <Image
+            src="/icons/VectorDown.svg"
+            alt="dropdown arrow"
+            width={12}
+            height={12}
+          />
         </div>
       </button>
       {isTokenSelectShown && (

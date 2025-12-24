@@ -1,7 +1,5 @@
 import { PopoverButton, PopoverPanel } from "@headlessui/react";
 import Image from "next/image";
-
-import VectorDown from "../../../../assets/VectorDown.svg";
 import { NetworkSettingsDropdown } from "./NetworkSettingsDropdown";
 import { useAppContext } from "../../../layouts/app";
 
@@ -24,7 +22,7 @@ export const NetworkSettingsBody = ({ open }: NetworkSettingsBodyProps) => {
 
         <div>{selectedNetwork?.name || "Unsupported"}</div>
         <div className={`hidden min-[375px]:block ${open ? "rotate-180" : ""}`}>
-          <Image src={VectorDown} alt={""} />
+          <Image src="/icons/VectorDown.svg" alt={""} width={12} height={12} />
         </div>
       </PopoverButton>
       <PopoverPanel className="md:relative z-20">

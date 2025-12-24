@@ -7,7 +7,6 @@ import {
 import { ERC20Token } from "@sabaaa1/common";
 import { SetStateAction, useEffect } from "react";
 import Image from "next/image";
-import VectorDown from "../../assets/VectorDown.svg";
 import { useAppContext } from "../layouts/app";
 
 interface TokenAmountInputInterface {
@@ -84,7 +83,7 @@ export const TokenAmountInput = ({
                   </span>
                 )}
                 <Image
-                  src={VectorDown}
+                  src="/icons/VectorDown.svg"
                   alt="dropdown"
                   width={12}
                   height={12}

@@ -1,7 +1,5 @@
 import { TokenBalance, zeroAddress } from "@sabaaa1/common";
 import toast from "react-hot-toast";
-import Copy from "../../../assets/Copy.svg";
-import Disconnect from "../../../assets/Disconnect.svg";
 import { WalletInfoBalance } from "./WalletInfoBalance";
 import { useAppContext } from "../../layouts/app";
 import { copyToClipboard } from "@/app/utils/copyToClipboard";
@@ -60,7 +58,11 @@ export const WalletInfoDropDown = () => {
         <button type="button" onClick={handleCopyShieldedAddress}>
           <div className="flex items-center mt-2 text-white text-[14px] md:w-[9.5rem]">
             <div className="flex justify-center items-center w-[25px] h-[25px]">
-              <img src={Copy} alt="Copy" className="w-[25px] h-[25px]" />
+              <img
+                src="/icons/Copy.svg"
+                alt="Copy"
+                className="w-[25px] h-[25px]"
+              />
             </div>
             <div className="pl-2">Copy Address</div>
           </div>
@@ -74,7 +76,7 @@ export const WalletInfoDropDown = () => {
             <div className="flex flex-row items-center text-white text-[14px] mt-2 w-[9.5rem]">
               <div className="flex justify-center items-center w-[25px] h-[25px]">
                 <img
-                  src={Disconnect}
+                  src="/icons/Disconnect.svg"
                   alt="Disconnect"
                   className="w-[25px] h-[25px]"
                 />

@@ -68,7 +68,7 @@ export const TokenAmountInput = ({
                 {selectedToken ? (
                   <>
                     {selectedToken.logoURI && (
-                      <Image
+                      <img
                         src={selectedToken.logoURI}
                         alt={selectedToken.symbol}
                         width={26}

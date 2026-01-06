@@ -1,16 +1,9 @@
 import { http, createConfig } from "wagmi";
 import { metaMask, coinbaseWallet, walletConnect } from "wagmi/connectors";
 import { networkRegistry } from "@sabaaa1/common";
-import {
-  mainnet,
-  polygon,
-  bsc,
-  arbitrum,
-  optimism,
-  avalanche,
-} from "wagmi/chains";
+import { mainnet, polygon, arbitrum, optimism, base } from "wagmi/chains";
 
-const chains = [mainnet, polygon, bsc, arbitrum, optimism, avalanche] as const;
+const chains = [mainnet, polygon, arbitrum, optimism, base] as const;
 
 export const wagmiConfig = (() => {
   const transports = chains.reduce((acc, chain) => {

@@ -14,6 +14,7 @@ import { SwapBalanceDisplay } from "../swap/SwapBalanceDisplay";
 import { SwapInputTokensButton } from "../swap/SwapInputTokensButton";
 import { useSwap } from "../hooks/useSwap";
 import { useUniswapPrice } from "../hooks/useUniswapPrice";
+import { BALANCE_REFRESH_DELAY_AFTER_TX } from "@/constants/balance-refresh-delay.constants";
 
 export const Swap = () => {
   const { hinkal, refreshBalances } = useAppContext();
@@ -43,7 +44,7 @@ export const Swap = () => {
     onSuccess: async () => {
       toast.success("Swap successful! Balance will update in several seconds");
       setInSwapAmount("");
-      await refreshBalances();
+      await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
     },
   });
 

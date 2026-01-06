@@ -5,6 +5,7 @@ import { useAppContext } from "../../layouts/app";
 import { TokenAmountInput } from "../TokenAmountInput";
 import { Spinner } from "../Spinner";
 import { useTransfer } from "../hooks/useTransfer";
+import { BALANCE_REFRESH_DELAY_AFTER_TX } from "@/constants/balance-refresh-delay.constants";
 
 export const Transfer = () => {
   const { refreshBalances } = useAppContext();
@@ -20,7 +21,7 @@ export const Transfer = () => {
       toast.success(
         "You have successfully transferred. Balance will update in several seconds"
       );
-      await refreshBalances();
+      await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
     },
   });
 

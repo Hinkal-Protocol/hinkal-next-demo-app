@@ -13,6 +13,7 @@ import { Spinner } from "../Spinner";
 import { InfoPanel } from "../InfoPanel";
 import { ToggleSwitch } from "../ToggleSwith";
 import { useWithdraw } from "../hooks/useWithdraw";
+import { BALANCE_REFRESH_DELAY_AFTER_TX } from "@/constants/balance-refresh-delay.constants";
 
 export const Withdraw = () => {
   const { hinkal, refreshBalances } = useAppContext();
@@ -29,7 +30,7 @@ export const Withdraw = () => {
       toast.success(
         "You have successfully withdrawn. Balance will update in several seconds"
       );
-      await refreshBalances();
+      await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
     },
   });
 

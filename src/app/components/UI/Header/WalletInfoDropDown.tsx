@@ -4,6 +4,7 @@ import { WalletInfoBalance } from "./WalletInfoBalance";
 import { useAppContext } from "../../layouts/app";
 import { copyToClipboard } from "@/app/utils/copyToClipboard";
 import { reloadPage } from "@/app/utils/pageReload";
+import { useEffect } from "react";
 
 const filterTokenBalances = (tokenBalances: TokenBalance[]) => {
   const nonZeroBalances = [...tokenBalances]
@@ -19,7 +20,11 @@ const filterTokenBalances = (tokenBalances: TokenBalance[]) => {
 };
 
 export const WalletInfoDropDown = () => {
-  const { balances, hinkal } = useAppContext();
+  const { balances, hinkal, chainId, refreshBalances } = useAppContext();
+
+  useEffect(() => {
+    if (chainId && refreshBalances) refreshBalances();
+  }, [chainId, refreshBalances]);
 
   const handleCopyShieldedAddress = () => {
     try {

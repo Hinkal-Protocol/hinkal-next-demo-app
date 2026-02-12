@@ -1,7 +1,5 @@
-import { Popover } from "@headlessui/react";
+import { PopoverButton, PopoverPanel } from "@headlessui/react";
 import Image from "next/image";
-
-import VectorDown from "../../../../assets/VectorDown.svg";
 import { WalletInfoDropDown } from "../WalletInfoDropDown";
 import { shortenAddress } from "../../../../utils/shortenAddress";
 
@@ -16,7 +14,7 @@ export const WalletSettingsBody = ({
 }: WalletSettingsBodyProps) => {
   return (
     <>
-      <Popover.Button
+      <PopoverButton
         as="button"
         type="button"
         className="flex flex-row gap-2 items-center border-[2px] border-solid border-[#624BFF] rounded-xl text-white text-base py-3 px-4 relative z-20"
@@ -24,12 +22,12 @@ export const WalletSettingsBody = ({
         <span>{shortenAddress(shieldedAddress ?? "")}</span>
 
         <div className={`hidden min-[375px]:block ${open ? "rotate-180" : ""}`}>
-          <Image src={VectorDown} alt={""} />
+          <Image src="/icons/VectorDown.svg" alt={""} width={12} height={12} />
         </div>
-      </Popover.Button>
-      <Popover.Panel className="md:relative z-20">
+      </PopoverButton>
+      <PopoverPanel className="md:relative z-20">
         <WalletInfoDropDown />
-      </Popover.Panel>
+      </PopoverPanel>
     </>
   );
 };

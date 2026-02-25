@@ -5,7 +5,7 @@ import {
   ErrorCategory,
   getAmountInToken,
   getErrorMessage,
-} from "@sabaaa1/common";
+} from "@hinkal/common";
 import { useAppContext } from "../../layouts/app";
 import { InfoPanel } from "../InfoPanel";
 import { Spinner } from "../Spinner";

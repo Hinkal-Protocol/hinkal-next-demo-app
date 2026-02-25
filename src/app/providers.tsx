@@ -2,7 +2,7 @@
 import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useEffect, useState } from "react";
-import { preProcessing } from "@sabaaa1/common";
+import { preProcessing } from "@hinkal/common";
 import { wagmiConfig } from "./configs/wagmi.config";
 
 preProcessing();

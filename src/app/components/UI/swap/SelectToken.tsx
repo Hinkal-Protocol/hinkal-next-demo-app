@@ -1,4 +1,4 @@
-import { ERC20Token } from "@sabaaa1/common";
+import { ERC20Token } from "@hinkal/common";
 import { useState } from "react";
 import Image from "next/image";
 import { TokenDropdown } from "./TokenDropdown";

@@ -1,6 +1,6 @@
 import { http, createConfig } from "wagmi";
 import { metaMask, coinbaseWallet, walletConnect } from "wagmi/connectors";
-import { networkRegistry } from "@sabaaa1/common";
+import { networkRegistry } from "@hinkal/common";
 import { mainnet, polygon, arbitrum, optimism, base } from "wagmi/chains";
 
 const chains = [mainnet, polygon, arbitrum, optimism, base] as const;

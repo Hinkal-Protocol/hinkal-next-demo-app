@@ -1,4 +1,4 @@
-import { TokenBalance, zeroAddress } from "@sabaaa1/common";
+import { TokenBalance, zeroAddress } from "@hinkal/common";
 import toast from "react-hot-toast";
 import { WalletInfoBalance } from "./WalletInfoBalance";
 import { useAppContext } from "../../layouts/app";

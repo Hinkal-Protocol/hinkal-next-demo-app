@@ -21,7 +21,7 @@ const nextConfig = {
         new CopyPlugin({
           patterns: [
             {
-              from: "./node_modules/@sabaaa1/common/assets/*.js",
+              from: "./node_modules/@hinkal/common/assets/*.js",
               to: "./static/media/[name].js",
             },
           ],

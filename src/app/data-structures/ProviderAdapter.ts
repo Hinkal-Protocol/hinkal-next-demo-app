@@ -10,7 +10,7 @@ import {
   localhostNetwork,
   networkRegistry,
   transactionErrorCodes,
-} from "@sabaaa1/common";
+} from "@hinkal/common";
 import { ethers, providers, Signer, utils } from "ethers";
 import { Config, Connector } from "wagmi";
 import {

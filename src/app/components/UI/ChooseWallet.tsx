@@ -8,7 +8,7 @@ import metamaskLogo from "../../assets/metamaskWalletLogo.png";
 import walletconnectLogo from "../../assets/walletconnectWalletLogo.png";
 import { Modal } from "./Modal";
 import { Spinner } from "./Spinner";
-import { prepareWagmiHinkal } from "@sabaaa1/common/providers/prepareWagmiHinkal";
+import { prepareWagmiHinkal } from "@hinkal/common/providers/prepareWagmiHinkal";
 import toast from "react-hot-toast";
 import { useAppContext } from "../layouts/app";
 

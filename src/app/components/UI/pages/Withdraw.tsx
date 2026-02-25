@@ -6,7 +6,7 @@ import {
   useMemo,
 } from "react";
 import { toast } from "react-hot-toast";
-import { ERC20Token, ErrorCategory, getErrorMessage } from "@sabaaa1/common";
+import { ERC20Token, ErrorCategory, getErrorMessage } from "@hinkal/common";
 import { useAppContext } from "../../layouts/app";
 import { TokenAmountInput } from "../TokenAmountInput";
 import { Spinner } from "../Spinner";

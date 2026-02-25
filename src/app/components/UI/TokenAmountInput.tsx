@@ -4,7 +4,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/react";
-import { ERC20Token } from "@sabaaa1/common";
+import { ERC20Token } from "@hinkal/common";
 import { SetStateAction, useEffect } from "react";
 import Image from "next/image";
 import { useAppContext } from "../layouts/app";

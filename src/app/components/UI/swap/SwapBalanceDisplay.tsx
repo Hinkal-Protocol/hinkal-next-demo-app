@@ -1,4 +1,4 @@
-import { ERC20Token, getAmountInToken } from "@sabaaa1/common";
+import { ERC20Token, getAmountInToken } from "@hinkal/common";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../../layouts/app";
 

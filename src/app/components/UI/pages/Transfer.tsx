@@ -1,6 +1,6 @@
 import { SyntheticEvent, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { getErrorMessage, ERC20Token } from "@sabaaa1/common";
+import { getErrorMessage, ERC20Token } from "@hinkal/common";
 import { useAppContext } from "../../layouts/app";
 import { TokenAmountInput } from "../TokenAmountInput";
 import { Spinner } from "../Spinner";

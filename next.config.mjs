@@ -2,6 +2,9 @@
 import CopyPlugin from "copy-webpack-plugin";
 
 const nextConfig = {
+  experimental: {
+    serverComponentsExternalPackages: ["web-worker"], //  serverComponentsExternalPackages tells Next.js: "don't bundle this package at all for the server — just call it natively at runtime."
+  },
   images: {
     remotePatterns: [
       {
@@ -23,6 +26,7 @@ const nextConfig = {
             {
               from: "./node_modules/@hinkal/common/assets/*.js",
               to: "./static/media/[name].js",
+              noErrorOnMissing: true,
             },
           ],
         }),

@@ -20,7 +20,7 @@ export function Providers({ children }: ProvidersProps) {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted || !wagmiConfig) return null;
 
   return (
     <WagmiProvider config={wagmiConfig}>

@@ -2,10 +2,7 @@
 import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useEffect, useState } from "react";
-import { preProcessing } from "@hinkal/common";
 import { wagmiConfig } from "./configs/wagmi.config";
-
-preProcessing();
 
 const queryClient = new QueryClient();
 
@@ -19,7 +16,7 @@ export function Providers({ children }: ProvidersProps) {
   useEffect(() => {
     setMounted(true);
   }, []);
-
+  
   if (!mounted || !wagmiConfig) return null;
 
   return (

@@ -4,23 +4,30 @@ import { WalletInfoBalance } from "./WalletInfoBalance";
 import { useAppContext } from "../../layouts/app";
 import { copyToClipboard } from "@/app/utils/copyToClipboard";
 import { reloadPage } from "@/app/utils/pageReload";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 const filterTokenBalances = (tokenBalances: TokenBalance[]) => {
   const nonZeroBalances = [...tokenBalances]
     .sort((a, b) =>
-      a.token.erc20TokenAddress < b.token.erc20TokenAddress ? -1 : 1
+      a.token.erc20TokenAddress < b.token.erc20TokenAddress ? -1 : 1,
     )
     .filter((tokenBalance) => tokenBalance.balance !== 0n);
   if (nonZeroBalances.length === 0)
     return tokenBalances.filter(
-      (tokenBalance) => tokenBalance.token.erc20TokenAddress === zeroAddress
+      (tokenBalance) => tokenBalance.token.erc20TokenAddress === zeroAddress,
     );
   return nonZeroBalances;
 };
 
 export const WalletInfoDropDown = () => {
-  const { balances, hinkal, chainId, refreshBalances } = useAppContext();
+  const {
+    balances,
+    hinkal,
+    chainId,
+    refreshBalances,
+    isRefreshing,
+    erc20List,
+  } = useAppContext();
 
   useEffect(() => {
     if (chainId && refreshBalances) refreshBalances();
@@ -36,22 +43,36 @@ export const WalletInfoDropDown = () => {
       copyToClipboard(shieldedAddress);
       toast.success("Shielded address copied to clipboard");
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        toast.error(err.message);
-      } else {
-        toast.error("Failed to copy shielded address");
-      }
+      toast.error(
+        err instanceof Error ? err.message : "Failed to copy shielded address",
+      );
     }
   };
+
+  const nativeToken = useMemo(
+    () => erc20List.find((t) => t.erc20TokenAddress === zeroAddress),
+    [erc20List],
+  );
+
+  const displayBalances = useMemo(
+    () =>
+      balances.length === 0 && !isRefreshing && nativeToken
+        ? [{ token: nativeToken, balance: 0n, timestamp: undefined, nfts: [] }]
+        : filterTokenBalances(balances),
+    [balances, isRefreshing, nativeToken],
+  );
 
   return (
     <div className="absolute min-w-max top-20 md:top-2 left-0 md:left-auto right-0 bg-[#272B30] rounded-xl shadow-metamask font-pubsans p-4 items-center max-content">
       <div className="flex items-center space-x-4">
         <div className="w-[26px]" />
         <p className="text-[#abaeaf] text-[12px] text-left">Balance</p>
+        {isRefreshing && balances.length === 0 && (
+          <div className="w-3 h-3 rounded-full border-2 border-[#abaeaf] border-t-transparent animate-spin" />
+        )}
       </div>
       <div className="flex flex-col justify-center gap-4 mb-[10%]">
-        {filterTokenBalances(balances).map((tokenBalance) => (
+        {displayBalances.map((tokenBalance) => (
           <WalletInfoBalance
             tokenBalance={tokenBalance}
             key={tokenBalance.token.erc20TokenAddress}

@@ -589,6 +589,32 @@
     "@tanstack/react-virtual" "^3.13.9"
     use-sync-external-store "^1.5.0"
 
+"@hinkal/common@0.2.22":
+  version "0.2.22"
+  resolved "https://registry.yarnpkg.com/@hinkal/common/-/common-0.2.22.tgz#2dfc795fd916029b5c04a9938295a82933e0d2c3"
+  integrity sha512-EQX5hPvimQSUaNsI0r+sbmJVcwvQZi8bTwX7Ngy3gwHAhCiKoSnzcfqRHFm1Yds2R7avJkGK3PATGbhA0KqOJQ==
+  dependencies:
+    "@coral-xyz/anchor" "^0.31.0"
+    "@solana/spl-token" "^0.4.14"
+    "@solana/wallet-adapter-react" "^0.15.39"
+    "@solana/web3.js" "^1.98.4"
+    async-mutex "^0.4.0"
+    axios "^1.6.8"
+    bs58 "^6.0.0"
+    buffer "6.0.3"
+    circomlibjs-hinkal-fork "^0.0.3"
+    dotenv "^16.4.5"
+    ethers-v6h "npm:ethers@^6.15.0"
+    idb-keyval "6.2.1"
+    libsodium-wrappers "^0.7.10"
+    multiformats "^9.4.2"
+    node-forge "^1.3.1"
+    process "0.11.10"
+    snarkjs "0.7.5"
+    tweetnacl "^1.0.3"
+    ua-parser-js "^1.0.37"
+    uuid "^9.0.1"
+
 "@humanwhocodes/config-array@^0.13.0":
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/@humanwhocodes/config-array/-/config-array-0.13.0.tgz#fb907624df3256d04b9aa2df50d7aa97ec648748"
@@ -4460,6 +4486,19 @@ ethereum-cryptography@^2.0.0:
     "@scure/bip32" "1.4.0"
     "@scure/bip39" "1.3.0"
 
+"ethers-v6h@npm:ethers@^6.15.0":
+  version "6.16.0"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.16.0.tgz#fff9b4f05d7a359c774ad6e91085a800f7fccf65"
+  integrity sha512-U1wulmetNymijEhpSEQ7Ct/P/Jw9/e7R1j5XIbPRydgV2DjLVMsULDlNksq3RQnFgKoLlZf88ijYtWEXcPa07A==
+  dependencies:
+    "@adraffy/ens-normalize" "1.10.1"
+    "@noble/curves" "1.2.0"
+    "@noble/hashes" "1.3.2"
+    "@types/node" "22.7.5"
+    aes-js "4.0.0-beta.5"
+    tslib "2.7.0"
+    ws "8.17.1"
+
 ethers@^5.7.2:
   version "5.8.0"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.8.0.tgz#97858dc4d4c74afce83ea7562fe9493cedb4d377"
@@ -4495,19 +4534,6 @@ ethers@^5.7.2:
     "@ethersproject/wallet" "5.8.0"
     "@ethersproject/web" "5.8.0"
     "@ethersproject/wordlists" "5.8.0"
-
-ethers@^6.15.0:
-  version "6.16.0"
-  resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.16.0.tgz#fff9b4f05d7a359c774ad6e91085a800f7fccf65"
-  integrity sha512-U1wulmetNymijEhpSEQ7Ct/P/Jw9/e7R1j5XIbPRydgV2DjLVMsULDlNksq3RQnFgKoLlZf88ijYtWEXcPa07A==
-  dependencies:
-    "@adraffy/ens-normalize" "1.10.1"
-    "@noble/curves" "1.2.0"
-    "@noble/hashes" "1.3.2"
-    "@types/node" "22.7.5"
-    aes-js "4.0.0-beta.5"
-    tslib "2.7.0"
-    ws "8.17.1"
 
 event-target-shim@^5.0.0:
   version "5.0.1"
@@ -4905,32 +4931,6 @@ h3@^1.15.5:
     radix3 "^1.1.2"
     ufo "^1.6.3"
     uncrypto "^0.1.3"
-
-h_test_1@0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/h_test_1/-/h_test_1-0.0.6.tgz#3aa1df2301696f44e453d62709aac3233681ff28"
-  integrity sha512-y5XNKYFrlEvRzhcv7dUQS4d72ylIKKHAU4WovrK4FSV7Fw1p8RS94gXg15rBoYJoomgUeZPTA2gR51G5Ga5ZFA==
-  dependencies:
-    "@coral-xyz/anchor" "^0.31.0"
-    "@solana/spl-token" "^0.4.14"
-    "@solana/wallet-adapter-react" "^0.15.39"
-    "@solana/web3.js" "^1.98.4"
-    async-mutex "^0.4.0"
-    axios "^1.6.8"
-    bs58 "^6.0.0"
-    buffer "6.0.3"
-    circomlibjs-hinkal-fork "^0.0.3"
-    dotenv "^16.4.5"
-    ethers "^6.15.0"
-    idb-keyval "6.2.1"
-    libsodium-wrappers "^0.8.2"
-    multiformats "^9.4.2"
-    node-forge "^1.3.1"
-    process "0.11.10"
-    snarkjs "0.7.5"
-    tweetnacl "^1.0.3"
-    ua-parser-js "^1.0.37"
-    uuid "^9.0.1"
 
 has-bigints@^1.0.2:
   version "1.1.0"
@@ -5541,17 +5541,17 @@ levn@^0.4.1:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
 
-libsodium-wrappers@^0.8.2:
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/libsodium-wrappers/-/libsodium-wrappers-0.8.2.tgz#717042fb8ad62e2e4dada53795873a08c98e658c"
-  integrity sha512-VFLmfxkxo+U9q60tjcnSomQBRx2UzlRjKWJqvB4K1pUqsMQg4cu3QXA2nrcsj9A1qRsnJBbi2Ozx1hsiDoCkhw==
+libsodium-wrappers@^0.7.10:
+  version "0.7.16"
+  resolved "https://registry.yarnpkg.com/libsodium-wrappers/-/libsodium-wrappers-0.7.16.tgz#abaa065e914562695c6c1d66527c8e72bbbaec15"
+  integrity sha512-Gtr/WBx4dKjvRL1pvfwZqu7gO6AfrQ0u9vFL+kXihtHf6NfkROR8pjYWn98MFDI3jN19Ii1ZUfPR9afGiPyfHg==
   dependencies:
-    libsodium "^0.8.0"
+    libsodium "^0.7.16"
 
-libsodium@^0.8.0:
-  version "0.8.2"
-  resolved "https://registry.yarnpkg.com/libsodium/-/libsodium-0.8.2.tgz#eadd168d478729e8f1687da8b78a352c421fa0b1"
-  integrity sha512-TsnGYMoZtpweT+kR+lOv5TVsnJ/9U0FZOsLFzFOMWmxqOAYXjX3fsrPAW+i1LthgDKXJnI9A8dWEanT1tnJKIw==
+libsodium@^0.7.16:
+  version "0.7.16"
+  resolved "https://registry.yarnpkg.com/libsodium/-/libsodium-0.7.16.tgz#3d4f9d68ed887bb8bf2e76bb3ba231265eae58a0"
+  integrity sha512-3HrzSPuzm6Yt9aTYCDxYEG8x8/6C0+ag655Y7rhhWZM9PT4NpdnbqlzXhGZlDnkgR6MeSTnOt/VIyHLs9aSf+Q==
 
 lilconfig@^3.1.1, lilconfig@^3.1.3:
   version "3.1.3"
@@ -5782,7 +5782,7 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
-next@16.1.16:
+next@16.1.6:
   version "16.1.6"
   resolved "https://registry.yarnpkg.com/next/-/next-16.1.6.tgz#24a861371cbe211be7760d9a89ddf2415e3824de"
   integrity sha512-hkyRkcu5x/41KoqnROkfTm2pZVbKxvbZRuNvKXLRXxs3VfyO0WhY50TQS40EuKO9SW3rBj/sF3WbVwDACeMZyw==

@@ -10,12 +10,11 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.1.10",
-    "@metamask/sdk": "^0.30.1",
     "@hinkal/common": "0.2.22",
     "@tanstack/react-query": "^5.90.12",
     "encoding": "^0.1.13",
     "ethers": "^5.7.2",
-    "next": "14.2.16",
+    "next": "16.1.16",
     "pino-pretty": "^11.3.0",
     "react": "^18",
     "react-device-detect": "^2.2.3",

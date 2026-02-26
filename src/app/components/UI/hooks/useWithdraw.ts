@@ -47,7 +47,7 @@ export const useWithdraw = ({
           return;
         }
 
-        if ("hash" in tx) await hinkal.waitForTransaction(tx.hash);
+        if ("hash" in tx) await hinkal.waitForTransaction(tx.hash as string);
 
         onSuccess?.();
       } catch (err) {

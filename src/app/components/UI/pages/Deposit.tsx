@@ -29,7 +29,7 @@ export const Deposit = () => {
       const result = await hinkal.deposit([selectedToken], [amountInWei]);
 
       if (result && typeof result === "object" && "hash" in result)
-        await hinkal.waitForTransaction(result.hash);
+        await hinkal.waitForTransaction(result.hash as string);
       await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
     } catch (err) {
       const errorMessage = getErrorMessage(err, ErrorCategory.DEPOSIT);

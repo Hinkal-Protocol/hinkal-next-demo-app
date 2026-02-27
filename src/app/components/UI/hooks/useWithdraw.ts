@@ -3,7 +3,7 @@ import { ERC20Token, getAmountInWei, Hinkal } from "@hinkal/common";
 import { Connector } from "wagmi";
 
 interface UseWithdrawProps {
-  hinkal: Hinkal<Connector>;
+  hinkal?: Hinkal<Connector>;
   onSuccess?: () => void;
   onError?: (err: unknown) => void;
 }
@@ -22,9 +22,7 @@ export const useWithdraw = ({
       recipientAddress: string,
       isRelayerOff: boolean,
     ) => {
-      if (!hinkal) {
-        throw new Error("Hinkal instance not initialized");
-      }
+      if (!hinkal) return;
 
       try {
         setIsProcessing(true);

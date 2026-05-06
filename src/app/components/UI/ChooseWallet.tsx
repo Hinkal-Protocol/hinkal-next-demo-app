@@ -59,7 +59,7 @@ export const ChooseWallet = ({
       setChainId,
       setDataLoaded,
       onHide,
-    ]
+    ],
   );
 
   const getConnectorLogo = (connectorName: string) => {
@@ -88,7 +88,7 @@ export const ChooseWallet = ({
       <div className="p-5 pb-10 flex flex-col items-center gap-y-5">
         {connectors
           .filter((connector) =>
-            isMobile ? connector.name === "WalletConnect" : true
+            isMobile ? connector.name === "WalletConnect" : true,
           )
           .map((connector) => {
             const logo = getConnectorLogo(connector.name);
@@ -109,7 +109,9 @@ export const ChooseWallet = ({
                   />
                 )}
                 <span className="text-black">{connector.name}</span>
-                {connectingId === connector.id && <Spinner />}
+                {connectingId === connector.id && (
+                  <Spinner styleSize="size-5 mr-0" />
+                )}
               </button>
             );
           })}

@@ -25,18 +25,15 @@ export const useUniswapPrice = ({
     const run = async () => {
       try {
         if (!hinkal || !inSwapToken || !outSwapToken || !chainId) return;
-        if (inSwapAmount.length === 0 || !inSwapAmount) {
-          setPrice(undefined);
-          setSwapData("");
-          return;
-        }
+        const parsed = parseFloat(inSwapAmount);
+        if (isNaN(parsed) || parsed <= 0) return;
         setIsPriceLoading(true);
         const priceDict = await getUniswapPrice(
           hinkal,
           chainId,
           inSwapAmount,
           inSwapToken,
-          outSwapToken
+          outSwapToken,
         );
         console.log({ priceDict });
         setPrice(priceDict.tokenPrice);

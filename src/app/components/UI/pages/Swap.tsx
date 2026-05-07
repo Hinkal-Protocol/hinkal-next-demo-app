@@ -1,6 +1,12 @@
-import { SyntheticEvent, useCallback, useMemo, useState } from "react";
+import {
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import toast from "react-hot-toast";
-import { ERC20Token } from "@gurg/hi-test";
+import { ERC20Token, ExternalActionId, FeeStructure } from "@gurg/hi-test";
 import { useAppContext } from "../../layouts/app";
 import { InfoPanel } from "../InfoPanel";
 import { Spinner } from "../Spinner";
@@ -11,9 +17,12 @@ import { useSwap } from "../hooks/useSwap";
 import { useUniswapPrice } from "../hooks/useUniswapPrice";
 import { BALANCE_REFRESH_DELAY_AFTER_TX } from "../../../constants";
 import { getAmountInToken } from "../../../utils/amount.utils";
+import { useFee } from "../hooks/useFee";
+import { FeeDisplay } from "../../FeeDisplay";
 
 export const Swap = () => {
   const { hinkal, refreshBalances } = useAppContext();
+  const { fee: swapFee, isFeeLoading, feeStructure, calculateFee } = useFee();
 
   const [inSwapAmount, setInSwapAmount] = useState("");
   const [inSwapToken, setInSwapToken] = useState<ERC20Token | undefined>();
@@ -63,10 +72,30 @@ export const Swap = () => {
     [inSwapAmount, inSwapToken, outSwapToken, outSwapAmountWei, fee],
   );
 
+  useEffect(() => {
+    if (inSwapToken && inSwapAmount)
+      calculateFee(inSwapToken, ExternalActionId.Uniswap);
+  }, [inSwapToken, inSwapAmount, calculateFee]);
+
   const handleSwap = useCallback(async () => {
     if (!inSwapToken || !outSwapToken || !outSwapAmountWei || !fee) return;
-    await swap(inSwapToken, outSwapToken, inSwapAmount, outSwapAmountWei, fee);
-  }, [swap, inSwapToken, outSwapToken, inSwapAmount, outSwapAmountWei, fee]);
+    await swap(
+      inSwapToken,
+      outSwapToken,
+      inSwapAmount,
+      outSwapAmountWei,
+      fee,
+      feeStructure as FeeStructure,
+    );
+  }, [
+    swap,
+    inSwapToken,
+    outSwapToken,
+    inSwapAmount,
+    outSwapAmountWei,
+    fee,
+    feeStructure,
+  ]);
 
   const setTokenAmountHandler = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -197,6 +226,11 @@ export const Swap = () => {
           </div>
         )}
       </div>
+      <FeeDisplay
+        fee={swapFee}
+        isFeeLoading={isFeeLoading}
+        selectedToken={inSwapToken}
+      />
       <div
         onClick={() => setRelayerInfoShown((prev) => !prev)}
         className="bg-[#272b3000] w-[88%] mx-auto rounded-xl py-1 flex items-center justify-between"

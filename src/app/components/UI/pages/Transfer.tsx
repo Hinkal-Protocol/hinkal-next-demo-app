@@ -1,14 +1,23 @@
-import { SyntheticEvent, useCallback, useMemo, useState } from "react";
+import {
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import toast from "react-hot-toast";
 import { Spinner } from "../Spinner";
 import { useAppContext } from "../../layouts/app";
 import { TokenAmountInput } from "../TokenAmountInput";
-import { ERC20Token } from "@gurg/hi-test";
+import { ERC20Token, FeeStructure } from "@gurg/hi-test";
 import { useTransfer } from "../hooks/useTransfer";
 import { BALANCE_REFRESH_DELAY_AFTER_TX } from "../../../constants";
+import { useFee } from "../hooks/useFee";
+import { FeeDisplay } from "../../FeeDisplay";
 
 export const Transfer = () => {
   const { refreshBalances } = useAppContext();
+  const { fee, isFeeLoading, feeStructure, calculateFee } = useFee();
 
   const { transfer, isProcessing } = useTransfer({
     onError: (err: Error) => {
@@ -30,10 +39,19 @@ export const Transfer = () => {
   const [transferAmount, setTransferAmount] = useState<string>("");
   const [transferAddress, setTransferAddress] = useState<string>("");
 
+  useEffect(() => {
+    if (selectedToken && transferAmount) calculateFee(selectedToken);
+  }, [selectedToken, transferAmount, calculateFee]);
+
   const handleTransfer = useCallback(() => {
     if (!selectedToken) return;
-    transfer?.(selectedToken, transferAmount, transferAddress);
-  }, [selectedToken, transferAmount, transferAddress, transfer]);
+    transfer?.(
+      selectedToken,
+      transferAmount,
+      transferAddress,
+      feeStructure as FeeStructure,
+    );
+  }, [selectedToken, transferAmount, transferAddress, transfer, feeStructure]);
 
   /**
    * recipient address onChange handler
@@ -79,6 +97,11 @@ export const Transfer = () => {
         />
         <br />
       </div>
+      <FeeDisplay
+        fee={fee}
+        isFeeLoading={isFeeLoading}
+        selectedToken={selectedToken}
+      />
       <div className="w-[90%] mx-auto mb-6 mt-6 h-[1px] bg-[#272B30]" />
       <div className=" border-solid ">
         <button

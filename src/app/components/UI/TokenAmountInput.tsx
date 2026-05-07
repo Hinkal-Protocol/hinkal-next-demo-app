@@ -4,7 +4,7 @@ import {
   ListboxOption,
   ListboxOptions,
 } from "@headlessui/react";
-import { ERC20Token } from "@hinkal/common";
+import { ERC20Token } from "@gurg/hi-test";
 import { SetStateAction, useEffect } from "react";
 import Image from "next/image";
 import { useAppContext } from "../layouts/app";
@@ -35,7 +35,7 @@ export const TokenAmountInput = ({
    * @param event onChange event instance
    */
   const setTokenAmountHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const regExp = /^[0-9]*[.]?[0-9]*$/;
     if (regExp.test(event.target.value)) {
@@ -68,6 +68,7 @@ export const TokenAmountInput = ({
                 {selectedToken ? (
                   <>
                     {selectedToken.logoURI && (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={selectedToken.logoURI}
                         alt={selectedToken.symbol}

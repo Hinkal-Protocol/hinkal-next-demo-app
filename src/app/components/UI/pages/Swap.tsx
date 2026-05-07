@@ -1,11 +1,6 @@
 import { SyntheticEvent, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import {
-  ERC20Token,
-  ErrorCategory,
-  getAmountInToken,
-  getErrorMessage,
-} from "@hinkal/common";
+import { ERC20Token } from "@gurg/hi-test";
 import { useAppContext } from "../../layouts/app";
 import { InfoPanel } from "../InfoPanel";
 import { Spinner } from "../Spinner";
@@ -14,7 +9,8 @@ import { SwapBalanceDisplay } from "../swap/SwapBalanceDisplay";
 import { SwapInputTokensButton } from "../swap/SwapInputTokensButton";
 import { useSwap } from "../hooks/useSwap";
 import { useUniswapPrice } from "../hooks/useUniswapPrice";
-import { BALANCE_REFRESH_DELAY_AFTER_TX } from "@/constants/balance-refresh-delay.constants";
+import { BALANCE_REFRESH_DELAY_AFTER_TX } from "../../../constants";
+import { getAmountInToken } from "../../../utils/amount.utils";
 
 export const Swap = () => {
   const { hinkal, refreshBalances } = useAppContext();
@@ -38,8 +34,8 @@ export const Swap = () => {
 
   const { swap, isProcessing } = useSwap({
     onError: (err) => {
-      const message = getErrorMessage(err, ErrorCategory.SWAP);
-      if (message !== "Swap failed") toast.error(message);
+      const message = err instanceof Error ? err.message : "Unknown error";
+      toast.error(message, { id: message });
     },
     onSuccess: async () => {
       toast.success("Swap successful! Balance will update in several seconds");
@@ -53,7 +49,7 @@ export const Swap = () => {
       outSwapToken && outSwapAmountWei
         ? getAmountInToken(outSwapToken, outSwapAmountWei)
         : "",
-    [outSwapToken, outSwapAmountWei]
+    [outSwapToken, outSwapAmountWei],
   );
 
   const isReadyForSwap = useMemo(
@@ -64,7 +60,7 @@ export const Swap = () => {
       inSwapToken &&
       outSwapToken &&
       fee,
-    [inSwapAmount, inSwapToken, outSwapToken, outSwapAmountWei, fee]
+    [inSwapAmount, inSwapToken, outSwapToken, outSwapAmountWei, fee],
   );
 
   const handleSwap = useCallback(async () => {
@@ -74,7 +70,7 @@ export const Swap = () => {
 
   const setTokenAmountHandler = (
     event: React.ChangeEvent<HTMLInputElement>,
-    setValue: (value: string) => void
+    setValue: (value: string) => void,
   ) => {
     if (/^[0-9]*[.]?[0-9]*$/.test(event.target.value)) {
       setValue(event.target.value);
@@ -113,8 +109,8 @@ export const Swap = () => {
                   `${Number(
                     inSwapToken
                       ? getAmountInToken(inSwapToken, inSwapTokenBalance)
-                      : 0
-                  ).toFixed(6)}`
+                      : 0,
+                  ).toFixed(6)}`,
                 )
               }
             >

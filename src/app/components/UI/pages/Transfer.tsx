@@ -1,25 +1,23 @@
 import { SyntheticEvent, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { getErrorMessage, ERC20Token } from "@hinkal/common";
+import { Spinner } from "../Spinner";
 import { useAppContext } from "../../layouts/app";
 import { TokenAmountInput } from "../TokenAmountInput";
-import { Spinner } from "../Spinner";
+import { ERC20Token } from "@gurg/hi-test";
 import { useTransfer } from "../hooks/useTransfer";
-import { BALANCE_REFRESH_DELAY_AFTER_TX } from "@/constants/balance-refresh-delay.constants";
+import { BALANCE_REFRESH_DELAY_AFTER_TX } from "../../../constants";
 
 export const Transfer = () => {
   const { refreshBalances } = useAppContext();
 
   const { transfer, isProcessing } = useTransfer({
     onError: (err: Error) => {
-      const message = getErrorMessage(err);
-      if (message !== "Transaction failed") {
-        toast.error(message);
-      }
+      const message = err instanceof Error ? err.message : "Unknown error";
+      toast.error(message, { id: message });
     },
     onSuccess: async () => {
       toast.success(
-        "You have successfully transferred. Balance will update in several seconds"
+        "You have successfully transferred. Balance will update in several seconds",
       );
       await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
     },
@@ -27,7 +25,7 @@ export const Transfer = () => {
 
   // local states
   const [selectedToken, setSelectedToken] = useState<ERC20Token | undefined>(
-    undefined
+    undefined,
   );
   const [transferAmount, setTransferAmount] = useState<string>("");
   const [transferAddress, setTransferAddress] = useState<string>("");
@@ -42,7 +40,7 @@ export const Transfer = () => {
    * @param event onChange event  instance
    */
   const setTransferAddressHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setTransferAddress(event.target.value);
   };
@@ -53,7 +51,7 @@ export const Transfer = () => {
 
   const isDisabled = useMemo(
     () => !selectedToken || !transferAmount || !transferAddress || isProcessing,
-    [selectedToken, transferAmount, transferAddress, isProcessing]
+    [selectedToken, transferAmount, transferAddress, isProcessing],
   );
 
   return (

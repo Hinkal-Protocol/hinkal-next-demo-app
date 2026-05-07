@@ -1,43 +1,39 @@
 import { SyntheticEvent, useCallback, useState, useMemo } from "react";
-import {
-  getAmountInWei,
-  ERC20Token,
-  getErrorMessage,
-  ErrorCategory,
-} from "@hinkal/common";
+import { ERC20Token } from "@gurg/hi-test";
 import { toast } from "react-hot-toast";
 import { useAppContext } from "../../layouts/app";
-import { Spinner } from "../Spinner";
+import { BALANCE_REFRESH_DELAY_AFTER_TX } from "@/app/constants";
+import { getAmountInWei } from "@/app/utils/amount.utils";
 import { TokenAmountInput } from "../TokenAmountInput";
-import { BALANCE_REFRESH_DELAY_AFTER_TX } from "@/constants/balance-refresh-delay.constants";
+import { Spinner } from "../Spinner";
 
 export const Deposit = () => {
-  const { hinkal, refreshBalances } = useAppContext();
+  const { hinkal, refreshBalances, chainId } = useAppContext();
 
   const [selectedToken, setSelectedToken] = useState<ERC20Token | undefined>(
-    undefined
+    undefined,
   );
   const [depositAmount, setDepositAmount] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleDeposit = useCallback(async () => {
     try {
-      if (!selectedToken) return;
+      if (!chainId || !selectedToken) return;
       setIsProcessing(true);
       const amountInWei = getAmountInWei(selectedToken, depositAmount);
 
       const result = await hinkal.deposit([selectedToken], [amountInWei]);
 
       if (result && typeof result === "object" && "hash" in result)
-        await hinkal.waitForTransaction(result.hash as string);
+        await hinkal.waitForTransaction(chainId, result.hash);
       await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
     } catch (err) {
-      const errorMessage = getErrorMessage(err, ErrorCategory.DEPOSIT);
+      const errorMessage = err instanceof Error ? err.message : "Unknown error";
       toast.error(errorMessage);
     } finally {
       setIsProcessing(false);
     }
-  }, [hinkal, depositAmount, selectedToken, refreshBalances]);
+  }, [chainId, selectedToken, depositAmount, hinkal, refreshBalances]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -45,7 +41,7 @@ export const Deposit = () => {
 
   const isDisabled = useMemo(
     () => !hinkal || !selectedToken || !depositAmount || isProcessing,
-    [hinkal, selectedToken, depositAmount, isProcessing]
+    [hinkal, selectedToken, depositAmount, isProcessing],
   );
 
   return (

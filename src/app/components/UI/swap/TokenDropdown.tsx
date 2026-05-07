@@ -1,4 +1,4 @@
-import { ERC20Token } from "@hinkal/common";
+import { ERC20Token } from "@gurg/hi-test";
 import { ReactNode, SetStateAction, useEffect, useState } from "react";
 import { Modal } from "../Modal";
 import { TokenDropdownButton } from "./TokenDropdownButton";
@@ -14,14 +14,14 @@ interface TokenDropdownProps {
 
 const splitTokenButtonsIntoRows = (
   tokenButtons: ReactNode[],
-  itemsPerRow: number
+  itemsPerRow: number,
 ) =>
   tokenButtons.reduce(
     (arr: ReactNode[][], button, index) =>
       index % itemsPerRow
         ? [...arr.slice(0, -1), [...arr[arr.length - 1], button]]
         : [...arr, [button]],
-    [[]]
+    [[]],
   );
 
 export const TokenDropdown = ({
@@ -32,14 +32,17 @@ export const TokenDropdown = ({
   tokenFilter = () => true,
 }: TokenDropdownProps) => {
   const { erc20List } = useAppContext();
-  const [itemsPerRow, setItemsPerRow] = useState(
-    window.innerWidth <= 500 ? 2 : 3
-  );
+
+  const [itemsPerRow, setItemsPerRow] = useState(3);
+
   useEffect(() => {
-    const onWindowSizeUpdate = () =>
+    const updateItemsPerRow = () =>
       setItemsPerRow(window.innerWidth <= 500 ? 2 : 3);
-    window.addEventListener("resize", onWindowSizeUpdate);
-    return () => window.removeEventListener("resize", onWindowSizeUpdate);
+
+    updateItemsPerRow();
+
+    window.addEventListener("resize", updateItemsPerRow);
+    return () => window.removeEventListener("resize", updateItemsPerRow);
   }, []);
 
   return (
@@ -68,7 +71,7 @@ export const TokenDropdown = ({
                       setIsTokenSelectShown={setIsTokenSelectShown}
                     />
                   )),
-                itemsPerRow
+                itemsPerRow,
               ).map((buttons, index) => (
                 <div
                   key={index}

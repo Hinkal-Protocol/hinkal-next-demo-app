@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { AppContextProvider } from "./layouts/app";
 import { Header } from "./UI/Header";
-import { AppTab } from "@/types/tabs";
+import { AppTab } from "@/app/types/tabs";
 import { NavigationBar } from "./UI/NavigationBar/NavigationBar";
 import { Deposit } from "./UI/pages/Deposit";
 import { Transfer } from "./UI/pages/Transfer";
@@ -18,7 +18,7 @@ const DemoPage = () => {
       <div className="bg-bgColor min-h-screen font-pubsans">
         <Header />
         <div className="flex justify-center">
-          <section className="bg-modalBgColor rounded-xl w-[87%] md:w-[40%] min-w-[300px] md:mt-[120px] md:h-fit mx-auto pt-2">
+          <section className="bg-modalBgColor rounded-xl w-[87%] md:w-[40%] min-w-[300px] md:mt-[120px] md:h-fit mx-auto p-4">
             <NavigationBar activeTab={activeTab} setActiveTab={setActiveTab} />
             <div className="px-2">
               {activeTab === AppTab.Deposit && <Deposit />}

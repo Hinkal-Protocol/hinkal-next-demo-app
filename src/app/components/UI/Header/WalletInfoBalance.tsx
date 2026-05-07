@@ -1,4 +1,5 @@
-import { TokenBalance, getAmountInToken } from "@hinkal/common";
+import { TokenBalance } from "@gurg/hi-test";
+import { getAmountInToken } from "../../../utils/amount.utils";
 
 interface WalletInfoBalanceProps {
   tokenBalance: TokenBalance;
@@ -18,7 +19,7 @@ export const WalletInfoBalance = ({ tokenBalance }: WalletInfoBalanceProps) => {
       <div>
         <p className="text-white text-[18px] font-semibold">
           {Number(
-            getAmountInToken(tokenBalance.token, tokenBalance.balance)
+            getAmountInToken(tokenBalance.token, tokenBalance.balance),
           ).toFixed(4)}{" "}
           {tokenBalance.token.symbol}
         </p>

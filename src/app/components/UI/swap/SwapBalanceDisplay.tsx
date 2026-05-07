@@ -1,6 +1,7 @@
-import { ERC20Token, getAmountInToken } from "@hinkal/common";
+import { ERC20Token } from "@gurg/hi-test";
 import { useEffect, useState } from "react";
 import { useAppContext } from "../../layouts/app";
+import { getAmountInToken } from "../../../utils/amount.utils";
 
 interface SwapBalanceDisplayProps {
   token?: ERC20Token;
@@ -22,7 +23,7 @@ export const SwapBalanceDisplay = ({
     }
 
     const tokenBalance = balances.find(
-      (b) => b.token.erc20TokenAddress === token.erc20TokenAddress
+      (b) => b.token.erc20TokenAddress === token.erc20TokenAddress,
     );
 
     const newBalance = tokenBalance?.balance ?? 0n;

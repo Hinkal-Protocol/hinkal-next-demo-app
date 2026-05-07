@@ -1,11 +1,7 @@
 import { useState, useCallback } from "react";
-import {
-  ERC20Token,
-  getAmountInWei,
-  hinkalSwap,
-  ExternalActionId,
-} from "@hinkal/common";
+import { ERC20Token, ExternalActionId } from "@gurg/hi-test";
 import { useAppContext } from "../../layouts/app";
+import { getAmountInWei } from "../../../utils/amount.utils";
 
 type UseSwapOptions = {
   onError?: (error: Error) => void;
@@ -22,7 +18,7 @@ export const useSwap = ({ onError, onSuccess }: UseSwapOptions = {}) => {
       tokenOut: ERC20Token,
       amountIn: string,
       expectedAmountOut: bigint,
-      fee: string
+      fee: string,
     ) => {
       try {
         setIsProcessing(true);
@@ -35,12 +31,11 @@ export const useSwap = ({ onError, onSuccess }: UseSwapOptions = {}) => {
 
         const amountInWei = getAmountInWei(tokenIn, amountIn);
 
-        await hinkalSwap(
-          hinkal,
+        await hinkal.swap(
           [tokenIn, tokenOut],
           [-amountInWei, expectedAmountOut],
           ExternalActionId.Uniswap,
-          fee
+          fee,
         );
 
         onSuccess?.();
@@ -51,7 +46,7 @@ export const useSwap = ({ onError, onSuccess }: UseSwapOptions = {}) => {
         setIsProcessing(false);
       }
     },
-    [hinkal, onError, onSuccess]
+    [hinkal, onError, onSuccess],
   );
 
   return { swap, isProcessing };

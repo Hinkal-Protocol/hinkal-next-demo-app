@@ -2,14 +2,14 @@ import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { isMobile } from "react-device-detect";
 import { useConfig, useConnectors } from "wagmi";
 import type { Connector } from "wagmi";
-import Image from "next/image";
 import coinbaseLogo from "../../assets/coinbaseWalletLogo.png";
 import metamaskLogo from "../../assets/metamaskWalletLogo.png";
 import walletconnectLogo from "../../assets/walletconnectWalletLogo.png";
 import { Modal } from "./Modal";
 import { Spinner } from "./Spinner";
-import { prepareWagmiHinkal } from "@hinkal/common/providers/prepareWagmiHinkal";
+import { prepareWagmiHinkal } from "@gurg/hi-test";
 import toast from "react-hot-toast";
+import Image from "next/image";
 import { useAppContext } from "../layouts/app";
 
 interface ChooseWalletProps {
@@ -28,7 +28,8 @@ export const ChooseWallet = ({
   const connectors = useConnectors();
   const config = useConfig();
 
-  const { setHinkal, setChainId, setDataLoaded } = useAppContext();
+  const { setHinkal, setChainId, setDataLoaded, refreshBalances } =
+    useAppContext();
 
   const [connectingId, setConnectingId] = useState<string | null>(null);
 
@@ -37,15 +38,24 @@ export const ChooseWallet = ({
       try {
         setIsConnecting?.(true);
         setConnectingId(connector.id);
+        try {
+          await connector.disconnect();
+        } catch (disconnectError) {
+          console.log("Disconnect cleanup:", disconnectError);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 200));
         const hinkal = await prepareWagmiHinkal(connector, config);
         setHinkal(hinkal);
-        setShieldedAddress(hinkal.userKeys.getShieldedPublicKey());
-        setChainId(hinkal.getCurrentChainId());
+        setShieldedAddress(hinkal.getShieldedPublicKey());
+        const providerAdapter = hinkal.getProviderAdapter();
+        const chainId = providerAdapter.getChainId();
+        if (!chainId) throw new Error("Chain id not found");
+        setChainId(chainId);
         setDataLoaded(true);
+        await refreshBalances(undefined, true);
         onHide();
       } catch (err) {
-        toast.error("Wallet connection failed");
-        console.error(err);
+        toast.error(`Wallet connection failed: ${err || "Unknown error"}`);
       } finally {
         setConnectingId(null);
         setIsConnecting?.(false);
@@ -58,8 +68,9 @@ export const ChooseWallet = ({
       setShieldedAddress,
       setChainId,
       setDataLoaded,
+      refreshBalances,
       onHide,
-    ]
+    ],
   );
 
   const getConnectorLogo = (connectorName: string) => {
@@ -88,7 +99,7 @@ export const ChooseWallet = ({
       <div className="p-5 pb-10 flex flex-col items-center gap-y-5">
         {connectors
           .filter((connector) =>
-            isMobile ? connector.name === "WalletConnect" : true
+            isMobile ? connector.name === "WalletConnect" : true,
           )
           .map((connector) => {
             const logo = getConnectorLogo(connector.name);

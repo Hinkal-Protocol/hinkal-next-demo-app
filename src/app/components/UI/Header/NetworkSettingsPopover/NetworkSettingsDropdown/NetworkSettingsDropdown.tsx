@@ -1,5 +1,5 @@
 import { NetworkDropdownItem } from "./NetworkDropdownItem";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { networkRegistry } from "@hinkal/common";
 import { useAppContext } from "../../../../layouts/app";
 import { SUPPORTED_CHAIN_IDS } from "@/constants/supported-chain-ids.constants";
@@ -12,29 +12,24 @@ export const NetworkSettingsDropdown = ({
   close,
 }: NetworkSettingsDropdownProps) => {
   const { hinkal, setChainId } = useAppContext();
-  const [switchingChainId, setSwitchingChainId] = useState<number | null>(null);
 
   const networkList = useMemo(
     () =>
       Object.values(networkRegistry).filter((network) =>
-        SUPPORTED_CHAIN_IDS.includes(network.chainId),
+        SUPPORTED_CHAIN_IDS.includes(network.chainId)
       ),
-    [],
+    []
   );
-
   const switchNetwork = useCallback(
     async (chainId: number) => {
       const network = networkList.find((net) => net.chainId === chainId);
       if (network) {
-        setSwitchingChainId(chainId);
         await hinkal.switchNetwork(network);
-        await new Promise((resolve) => setTimeout(resolve, 500));
         setChainId(network.chainId);
-        setSwitchingChainId(null);
         close();
       }
     },
-    [close, hinkal, networkList, setChainId],
+    [close, hinkal, networkList, setChainId]
   );
 
   return (
@@ -44,9 +39,7 @@ export const NetworkSettingsDropdown = ({
           <NetworkDropdownItem
             logoPath={""}
             networkName={name}
-            onSelect={() => switchNetwork(chainId)}
-            isLoading={switchingChainId === chainId}
-            disabled={switchingChainId !== null}
+            onSelect={() => switchNetwork?.(chainId)}
           />
           {index !== networkList.length - 1 && (
             <div className="border-b-[1px] mt-1 border-[#36393D] mx-[0.6rem]" />

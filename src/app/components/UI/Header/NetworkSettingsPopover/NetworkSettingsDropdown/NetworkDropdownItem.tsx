@@ -1,26 +1,31 @@
-import { Spinner } from "../../../Spinner";
+import { useSwitchChain } from "wagmi";
 
 interface NetworkDropdownItemProps {
   logoPath?: string;
   networkName: string;
   onSelect: () => void;
-  isLoading?: boolean;
-  disabled?: boolean;
 }
 
 export const NetworkDropdownItem = ({
   logoPath,
   networkName,
   onSelect,
-  isLoading = false,
-  disabled = false,
 }: NetworkDropdownItemProps) => {
+  const {} = useSwitchChain({
+    mutation: {
+      onError(err) {
+        console.error(err);
+      },
+    },
+  });
+
   return (
     <button
       type="button"
       onClick={onSelect}
-      disabled={disabled}
-      className="py-1 px-2 hover:bg-[#4f4f4f] w-full md:w-[220px] flex flex-col disabled:opacity-50 disabled:cursor-not-allowed"
+      className={
+        "py-1 px-2 hover:bg-[#4f4f4f] w-full md:w-[220px] flex flex-col"
+      }
     >
       <div className="w-full flex items-center justify-between">
         <div className="flex pb-1 flex-1 items-center justify-between">
@@ -32,7 +37,6 @@ export const NetworkDropdownItem = ({
             <span>{networkName}</span>
           </div>
         </div>
-        {isLoading && <Spinner styleSize="size-5 mr-0" />}
       </div>
     </button>
   );

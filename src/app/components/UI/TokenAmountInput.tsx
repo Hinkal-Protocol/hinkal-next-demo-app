@@ -35,7 +35,7 @@ export const TokenAmountInput = ({
    * @param event onChange event instance
    */
   const setTokenAmountHandler = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const regExp = /^[0-9]*[.]?[0-9]*$/;
     if (regExp.test(event.target.value)) {
@@ -90,7 +90,7 @@ export const TokenAmountInput = ({
                   className={open ? "rotate-180" : ""}
                 />
               </ListboxButton>
-              <ListboxOptions className="absolute w-full top-10 text-white flex flex-col bg-[#272B30] rounded-b-lg z-20 max-h-64 overflow-y-auto">
+              <ListboxOptions className="absolute w-full top-10 text-white flex flex-col bg-[#272B30] rounded-b-lg z-20">
                 {erc20List.map((token, index) => (
                   <ListboxOption
                     key={token.name + token.erc20TokenAddress}

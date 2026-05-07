@@ -1,4 +1,10 @@
-import { SyntheticEvent, useCallback, useState, useMemo } from "react";
+import {
+  SyntheticEvent,
+  useCallback,
+  useState,
+  useEffect,
+  useMemo,
+} from "react";
 import { toast } from "react-hot-toast";
 import { ERC20Token, ErrorCategory, getErrorMessage } from "@hinkal/common";
 import { useAppContext } from "../../layouts/app";
@@ -22,30 +28,40 @@ export const Withdraw = () => {
     },
     onSuccess: async () => {
       toast.success(
-        "You have successfully withdrawn. Balance will update in several seconds",
+        "You have successfully withdrawn. Balance will update in several seconds"
       );
       await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
     },
   });
 
   const [selectedToken, setSelectedToken] = useState<ERC20Token | undefined>(
-    undefined,
+    undefined
   );
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [recipientAddress, setRecipientAddress] = useState("");
   const [isRelayerOff, setIsRelayerOff] = useState(false);
   const [showRelayerDetails, setShowRelayerDetails] = useState(false);
 
+  useEffect(() => {
+    const fetchAddress = async () => {
+      if (!hinkal) return;
+
+      try {
+        const addr = await hinkal.getEthereumAddress();
+        setRecipientAddress(addr);
+      } catch (err: unknown) {
+        console.warn("Hinkal provider not ready yet:", err);
+        setRecipientAddress("");
+      }
+    };
+
+    fetchAddress();
+  }, [hinkal]);
+
   const handleWithdraw = useCallback(() => {
     if (!selectedToken) return;
     withdraw?.(selectedToken, withdrawAmount, recipientAddress, isRelayerOff);
   }, [withdraw, selectedToken, withdrawAmount, recipientAddress, isRelayerOff]);
-
-  const setRecipientAddressHandler = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setRecipientAddress(event.target.value);
-  };
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
@@ -58,7 +74,7 @@ export const Withdraw = () => {
       !withdrawAmount ||
       !recipientAddress ||
       isProcessing,
-    [hinkal, selectedToken, withdrawAmount, recipientAddress, isProcessing],
+    [hinkal, selectedToken, withdrawAmount, recipientAddress, isProcessing]
   );
 
   return (
@@ -70,23 +86,6 @@ export const Withdraw = () => {
           selectedToken={selectedToken}
           setSelectedToken={setSelectedToken}
         />
-        <div className="mt-[-15px] text-white">
-          <label
-            htmlFor="recipentAddressWithdraw"
-            className="text-white pl-[5%] text-[14px] font-[300]"
-          >
-            Recipient address{" "}
-          </label>
-          <br />
-          <input
-            type="text"
-            placeholder="Please paste address here"
-            className="bg-[#272B30] h-10 w-[90%] ml-[5%] rounded-lg mb-4 pl-2 outline-none placeholder:text-[13.5px] mt-1"
-            disabled={!withdraw}
-            onChange={setRecipientAddressHandler}
-            value={recipientAddress}
-          />
-        </div>
         <div className="flex justify-between items-center mt-2 w-[90%] mx-auto">
           <InfoPanel
             cloudText="Relayers are secure and trustworthy anonymous nodes that

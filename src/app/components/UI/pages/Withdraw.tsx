@@ -6,7 +6,7 @@ import {
   useMemo,
 } from "react";
 import { toast } from "react-hot-toast";
-import { ERC20Token } from "@gurg/hi-test";
+import { ERC20Token, FeeStructure } from "@gurg/hi-test";
 import { useAppContext } from "../../layouts/app";
 import { TokenAmountInput } from "../TokenAmountInput";
 import { Spinner } from "../Spinner";
@@ -14,9 +14,12 @@ import { InfoPanel } from "../InfoPanel";
 import { ToggleSwitch } from "../ToggleSwith";
 import { useWithdraw } from "../hooks/useWithdraw";
 import { BALANCE_REFRESH_DELAY_AFTER_TX } from "@/app/constants/balance-refresh-delay.constants";
+import { FeeDisplay } from "../../FeeDisplay";
+import { useFee } from "../hooks/useFee";
 
 export const Withdraw = () => {
   const { hinkal, refreshBalances } = useAppContext();
+  const { fee, isFeeLoading, feeStructure, calculateFee } = useFee();
 
   const { withdraw, isProcessing } = useWithdraw({
     hinkal,
@@ -40,10 +43,27 @@ export const Withdraw = () => {
   const [isRelayerOff, setIsRelayerOff] = useState(false);
   const [showRelayerDetails, setShowRelayerDetails] = useState(false);
 
+  useEffect(() => {
+    if (selectedToken && withdrawAmount) calculateFee(selectedToken);
+  }, [selectedToken, withdrawAmount, calculateFee]);
+
   const handleWithdraw = useCallback(() => {
     if (!selectedToken) return;
-    withdraw?.(selectedToken, withdrawAmount, recipientAddress, isRelayerOff);
-  }, [withdraw, selectedToken, withdrawAmount, recipientAddress, isRelayerOff]);
+    withdraw(
+      selectedToken,
+      withdrawAmount,
+      recipientAddress,
+      isRelayerOff,
+      feeStructure as FeeStructure,
+    );
+  }, [
+    withdraw,
+    selectedToken,
+    withdrawAmount,
+    recipientAddress,
+    isRelayerOff,
+    feeStructure,
+  ]);
 
   const setRecipientAddressHandler = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -91,6 +111,11 @@ export const Withdraw = () => {
             value={recipientAddress}
           />
         </div>
+        <FeeDisplay
+          fee={fee}
+          isFeeLoading={isFeeLoading}
+          selectedToken={selectedToken}
+        />
         <div className="flex justify-between items-center mt-2 w-[90%] mx-auto">
           <InfoPanel
             cloudText="Relayers are secure and trustworthy anonymous nodes that

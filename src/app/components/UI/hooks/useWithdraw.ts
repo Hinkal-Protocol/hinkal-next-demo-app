@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { ERC20Token, Hinkal } from "@gurg/hi-test";
+import { ERC20Token, FeeStructure, Hinkal } from "@gurg/hi-test";
 import { useAppContext } from "../../layouts/app";
 import { getAmountInWei } from "../../../utils/amount.utils";
 import { Connector } from "wagmi";
@@ -24,6 +24,7 @@ export const useWithdraw = ({
       amount: string,
       recipientAddress: string,
       isRelayerOff: boolean,
+      feeStructure: FeeStructure,
     ) => {
       if (!hinkal) {
         throw new Error("Hinkal instance not initialized");
@@ -43,6 +44,8 @@ export const useWithdraw = ({
           [-amountInWei],
           recipientAddress,
           isRelayerOff,
+          undefined,
+          feeStructure,
         );
 
         if (typeof tx === "bigint") {

@@ -32,7 +32,6 @@ export const Transfer = () => {
     },
   });
 
-  // local states
   const [selectedToken, setSelectedToken] = useState<ERC20Token | undefined>(
     undefined,
   );

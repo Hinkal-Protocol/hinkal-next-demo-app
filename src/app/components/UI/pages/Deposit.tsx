@@ -27,6 +27,9 @@ export const Deposit = () => {
       if (result && typeof result === "object" && "hash" in result)
         await hinkal.waitForTransaction(chainId, result.hash);
       await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
+      toast.success(
+        "Deposit successful! Balance will update in several seconds",
+      );
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Unknown error";
       toast.error(errorMessage);

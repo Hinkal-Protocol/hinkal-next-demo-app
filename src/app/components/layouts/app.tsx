@@ -31,11 +31,6 @@ type AppContextArgumnets = {
   balances: TokenBalance[];
   setBalances: (balances: TokenBalance[]) => void;
   isLoadingBalances: boolean;
-  refreshBalances: (
-    delayMs?: number,
-    force?: boolean,
-    overrideChainId?: number,
-  ) => Promise<void>;
 };
 
 const hinkalInstance = new Hinkal<Connector>();
@@ -54,7 +49,6 @@ const AppContext = createContext<AppContextArgumnets>({
   balances: [],
   setBalances: () => {},
   isLoadingBalances: false,
-  refreshBalances: async () => {},
 });
 
 type AppContextProps = { children: ReactNode };
@@ -73,7 +67,6 @@ export const AppContextProvider: FC<AppContextProps> = ({
   const [erc20List, setErc20List] = useState<ERC20Token[]>([]);
   const [balances, setBalances] = useState<TokenBalance[]>([]);
   const [isLoadingBalances, setIsLoadingBalances] = useState<boolean>(false);
-  const isRefreshingRef = useRef(false);
 
   const networkList = useMemo(() => Object.values(networkRegistry), []);
 
@@ -109,48 +102,33 @@ export const AppContextProvider: FC<AppContextProps> = ({
     };
   }, [chainId]);
 
-  const refreshBalances = useCallback(
-    async (delayMs?: number, force = false, overrideChainId?: number) => {
-      // Use overrideChainId when provided — this avoids the stale closure
-      // problem where chainId in this callback still holds the previous value
-      // immediately after setChainId() is called (React state updates are async).
-      const effectiveChainId = overrideChainId ?? chainId;
-
-      if (
-        !dataLoaded ||
-        (!force && isRefreshingRef.current) ||
-        !effectiveChainId
-      ) {
-        return;
-      }
-      try {
-        isRefreshingRef.current = true;
-        setIsLoadingBalances(true);
-        if (delayMs) await new Promise((res) => setTimeout(res, delayMs));
-        const bals = await hinkal.getTotalBalance(effectiveChainId);
-        const balancesArray = Array.from(bals.values());
-        setBalances(balancesArray);
-      } catch (error) {
-        console.error("Error refreshing balances:", error);
-      } finally {
-        isRefreshingRef.current = false;
-        setIsLoadingBalances(false);
-      }
-    },
-    [dataLoaded, hinkal, chainId],
-  );
+  const refreshBalances = useCallback(async () => {
+    if (!chainId) {
+      return;
+    }
+    try {
+      setIsLoadingBalances(true);
+      const bals = await hinkal.getTotalBalance(chainId);
+      const balancesArray = Array.from(bals.values());
+      setBalances(balancesArray);
+    } catch (error) {
+      console.error("Error refreshing balances:", error);
+    } finally {
+      setIsLoadingBalances(false);
+    }
+  }, [hinkal, chainId]);
 
   useEffect(() => {
-    if (!dataLoaded) return;
-
     refreshBalances();
+  }, [refreshBalances]);
 
-    const interval = setInterval(() => {
-      refreshBalances();
-    }, BALANCE_REFRESH_INTERVAL);
+  useEffect(() => {
+    const unsubscribe = hinkal.onBalanceRefresh(refreshBalances);
 
-    return () => clearInterval(interval);
-  }, [dataLoaded, refreshBalances]);
+    return () => {
+      unsubscribe();
+    };
+  }, [hinkal, refreshBalances]);
 
   return (
     <AppContext.Provider
@@ -167,7 +145,6 @@ export const AppContextProvider: FC<AppContextProps> = ({
         balances,
         setBalances,
         isLoadingBalances,
-        refreshBalances,
       }}
     >
       {children}

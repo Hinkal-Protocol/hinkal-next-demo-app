@@ -2,13 +2,12 @@ import { SyntheticEvent, useCallback, useState, useMemo } from "react";
 import { ERC20Token } from "@gurg/hi-test";
 import { toast } from "react-hot-toast";
 import { useAppContext } from "../../layouts/app";
-import { BALANCE_REFRESH_DELAY_AFTER_TX } from "@/app/constants";
 import { getAmountInWei } from "@/app/utils/amount.utils";
 import { TokenAmountInput } from "../TokenAmountInput";
 import { Spinner } from "../Spinner";
 
 export const Deposit = () => {
-  const { hinkal, refreshBalances, chainId } = useAppContext();
+  const { hinkal, chainId } = useAppContext();
 
   const [selectedToken, setSelectedToken] = useState<ERC20Token | undefined>(
     undefined,
@@ -26,7 +25,6 @@ export const Deposit = () => {
 
       if (result && typeof result === "object" && "hash" in result)
         await hinkal.waitForTransaction(chainId, result.hash);
-      await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
       toast.success(
         "Deposit successful! Balance will update in several seconds",
       );
@@ -36,7 +34,7 @@ export const Deposit = () => {
     } finally {
       setIsProcessing(false);
     }
-  }, [chainId, selectedToken, depositAmount, hinkal, refreshBalances]);
+  }, [chainId, selectedToken, depositAmount, hinkal]);
 
   const handleSubmit = (event: SyntheticEvent) => {
     event.preventDefault();

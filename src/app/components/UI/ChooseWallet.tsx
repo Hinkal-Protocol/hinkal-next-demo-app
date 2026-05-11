@@ -7,7 +7,7 @@ import metamaskLogo from "../../assets/metamaskWalletLogo.png";
 import walletconnectLogo from "../../assets/walletconnectWalletLogo.png";
 import { Modal } from "./Modal";
 import { Spinner } from "./Spinner";
-import { prepareWagmiHinkal } from "@gurg/hi-test";
+import { prepareWagmiHinkal } from "@gurg/hi-test/functions/providers/prepareWagmiHinkal";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import { useAppContext } from "../layouts/app";
@@ -28,8 +28,7 @@ export const ChooseWallet = ({
   const connectors = useConnectors();
   const config = useConfig();
 
-  const { setHinkal, setChainId, setDataLoaded, refreshBalances } =
-    useAppContext();
+  const { setHinkal, setChainId, setDataLoaded } = useAppContext();
 
   const [connectingId, setConnectingId] = useState<string | null>(null);
 
@@ -52,7 +51,6 @@ export const ChooseWallet = ({
         if (!chainId) throw new Error("Chain id not found");
         setChainId(chainId);
         setDataLoaded(true);
-        await refreshBalances(undefined, true);
         onHide();
       } catch (err) {
         toast.error(`Wallet connection failed: ${err || "Unknown error"}`);
@@ -68,7 +66,6 @@ export const ChooseWallet = ({
       setShieldedAddress,
       setChainId,
       setDataLoaded,
-      refreshBalances,
       onHide,
     ],
   );

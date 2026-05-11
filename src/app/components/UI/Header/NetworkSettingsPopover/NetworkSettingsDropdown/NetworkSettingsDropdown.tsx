@@ -10,7 +10,7 @@ interface NetworkSettingsDropdownProps {
 export const NetworkSettingsDropdown = ({
   close,
 }: NetworkSettingsDropdownProps) => {
-  const { hinkal, setChainId, setBalances, refreshBalances } = useAppContext();
+  const { hinkal, setChainId, setBalances } = useAppContext();
 
   const networkList = useMemo(
     () =>
@@ -25,14 +25,13 @@ export const NetworkSettingsDropdown = ({
       const network = networkList.find((net) => net.chainId === chainId);
       if (network) {
         await hinkal.switchNetwork(network.chainId);
+        await hinkal.resetMerkle();
         setChainId(network.chainId);
         setBalances([]);
         close();
-        await hinkal.resetMerkle();
-        await refreshBalances(undefined, true, network.chainId);
       }
     },
-    [close, hinkal, networkList, setBalances, setChainId, refreshBalances],
+    [close, hinkal, networkList, setBalances, setChainId],
   );
 
   return (

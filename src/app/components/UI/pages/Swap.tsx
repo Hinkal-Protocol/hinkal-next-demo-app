@@ -15,13 +15,12 @@ import { SwapBalanceDisplay } from "../swap/SwapBalanceDisplay";
 import { SwapInputTokensButton } from "../swap/SwapInputTokensButton";
 import { useSwap } from "../hooks/useSwap";
 import { useUniswapPrice } from "../hooks/useUniswapPrice";
-import { BALANCE_REFRESH_DELAY_AFTER_TX } from "../../../constants";
 import { getAmountInToken } from "../../../utils/amount.utils";
 import { useFee } from "../hooks/useFee";
 import { FeeDisplay } from "../../FeeDisplay";
 
 export const Swap = () => {
-  const { hinkal, refreshBalances } = useAppContext();
+  const { hinkal } = useAppContext();
 
   const [inSwapAmount, setInSwapAmount] = useState("");
   const [inSwapToken, setInSwapToken] = useState<ERC20Token | undefined>();
@@ -59,7 +58,6 @@ export const Swap = () => {
     onSuccess: async () => {
       toast.success("Swap successful! Balance will update in several seconds");
       setInSwapAmount("");
-      await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
     },
   });
 

@@ -1,10 +1,4 @@
-import {
-  SyntheticEvent,
-  useCallback,
-  useState,
-  useEffect,
-  useMemo,
-} from "react";
+import { SyntheticEvent, useCallback, useState, useMemo } from "react";
 import { toast } from "react-hot-toast";
 import { ERC20Token, ExternalActionId, FeeStructure } from "@gurg/hi-test";
 import { useAppContext } from "../../layouts/app";
@@ -13,12 +7,11 @@ import { Spinner } from "../Spinner";
 import { InfoPanel } from "../InfoPanel";
 import { ToggleSwitch } from "../ToggleSwith";
 import { useWithdraw } from "../hooks/useWithdraw";
-import { BALANCE_REFRESH_DELAY_AFTER_TX } from "@/app/constants/balance-refresh-delay.constants";
 import { FeeDisplay } from "../../FeeDisplay";
 import { useFee } from "../hooks/useFee";
 
 export const Withdraw = () => {
-  const { hinkal, refreshBalances } = useAppContext();
+  const { hinkal } = useAppContext();
 
   const { withdraw, isProcessing } = useWithdraw({
     hinkal,
@@ -30,7 +23,6 @@ export const Withdraw = () => {
       toast.success(
         "You have successfully withdrawn. Balance will update in several seconds",
       );
-      await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
     },
   });
 

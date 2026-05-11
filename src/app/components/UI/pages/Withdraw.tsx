@@ -46,13 +46,13 @@ export const Withdraw = () => {
   );
 
   const handleWithdraw = useCallback(() => {
-    if (!selectedToken) return;
+    if (!selectedToken || !feeStructure) return;
     withdraw(
       selectedToken,
       withdrawAmount,
       recipientAddress,
       isRelayerOff,
-      feeStructure as FeeStructure,
+      feeStructure,
     );
   }, [
     withdraw,

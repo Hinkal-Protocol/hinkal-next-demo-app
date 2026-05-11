@@ -22,7 +22,6 @@ import { FeeDisplay } from "../../FeeDisplay";
 
 export const Swap = () => {
   const { hinkal, refreshBalances } = useAppContext();
-  const { fee: swapFee, isFeeLoading, feeStructure, calculateFee } = useFee();
 
   const [inSwapAmount, setInSwapAmount] = useState("");
   const [inSwapToken, setInSwapToken] = useState<ERC20Token | undefined>();
@@ -30,6 +29,17 @@ export const Swap = () => {
   const [inSwapTokenBalance, setInSwapTokenBalance] = useState(0n);
   const [priceDetailsShown, setPriceDetailsShown] = useState(false);
   const [relayerInfoShown, setRelayerInfoShown] = useState(false);
+
+  const tokenAddresses = useMemo(
+    () => [inSwapToken?.erc20TokenAddress, outSwapToken?.erc20TokenAddress],
+    [inSwapToken, outSwapToken],
+  );
+
+  const { isFeeLoading, feeStructure } = useFee(
+    inSwapToken,
+    ExternalActionId.Uniswap,
+    tokenAddresses,
+  );
 
   const {
     isPriceLoading,
@@ -71,11 +81,6 @@ export const Swap = () => {
       fee,
     [inSwapAmount, inSwapToken, outSwapToken, outSwapAmountWei, fee],
   );
-
-  useEffect(() => {
-    if (inSwapToken && inSwapAmount)
-      calculateFee(inSwapToken, ExternalActionId.Uniswap);
-  }, [inSwapToken, inSwapAmount, calculateFee]);
 
   const handleSwap = useCallback(async () => {
     if (!inSwapToken || !outSwapToken || !outSwapAmountWei || !fee) return;
@@ -227,7 +232,7 @@ export const Swap = () => {
         )}
       </div>
       <FeeDisplay
-        fee={swapFee}
+        fee={feeStructure?.flatFee}
         isFeeLoading={isFeeLoading}
         selectedToken={inSwapToken}
       />

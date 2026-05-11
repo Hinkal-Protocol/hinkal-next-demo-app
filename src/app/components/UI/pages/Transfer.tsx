@@ -9,7 +9,7 @@ import toast from "react-hot-toast";
 import { Spinner } from "../Spinner";
 import { useAppContext } from "../../layouts/app";
 import { TokenAmountInput } from "../TokenAmountInput";
-import { ERC20Token, FeeStructure } from "@gurg/hi-test";
+import { ERC20Token, ExternalActionId, FeeStructure } from "@gurg/hi-test";
 import { useTransfer } from "../hooks/useTransfer";
 import { BALANCE_REFRESH_DELAY_AFTER_TX } from "../../../constants";
 import { useFee } from "../hooks/useFee";
@@ -17,7 +17,6 @@ import { FeeDisplay } from "../../FeeDisplay";
 
 export const Transfer = () => {
   const { refreshBalances } = useAppContext();
-  const { fee, isFeeLoading, feeStructure, calculateFee } = useFee();
 
   const { transfer, isProcessing } = useTransfer({
     onError: (err: Error) => {
@@ -38,9 +37,16 @@ export const Transfer = () => {
   const [transferAmount, setTransferAmount] = useState<string>("");
   const [transferAddress, setTransferAddress] = useState<string>("");
 
-  useEffect(() => {
-    if (selectedToken && transferAmount) calculateFee(selectedToken);
-  }, [selectedToken, transferAmount, calculateFee]);
+  const tokenAddresses = useMemo(
+    () => [selectedToken?.erc20TokenAddress],
+    [selectedToken],
+  );
+
+  const { isFeeLoading, feeStructure } = useFee(
+    selectedToken,
+    ExternalActionId.Transact,
+    tokenAddresses,
+  );
 
   const handleTransfer = useCallback(() => {
     if (!selectedToken) return;
@@ -97,7 +103,7 @@ export const Transfer = () => {
         <br />
       </div>
       <FeeDisplay
-        fee={fee}
+        fee={feeStructure?.flatFee}
         isFeeLoading={isFeeLoading}
         selectedToken={selectedToken}
       />

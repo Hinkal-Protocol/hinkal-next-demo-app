@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect } from "react";
 import {
   ERC20Token,
   ExternalActionId,
@@ -7,41 +7,43 @@ import {
 } from "@gurg/hi-test";
 import { useAppContext } from "../../layouts/app";
 
-export const useFee = () => {
+export const useFee = (
+  feeToken: ERC20Token | undefined,
+  actionId: ExternalActionId,
+  tokenAddresses: (string | undefined)[],
+) => {
   const { chainId } = useAppContext();
-  const [fee, setFee] = useState<bigint | null>(null);
   const [feeStructure, setFeeStructure] = useState<FeeStructure | undefined>(
     undefined,
   );
   const [isFeeLoading, setIsFeeLoading] = useState(false);
 
-  const calculateFee = useCallback(
-    async (
-      token: ERC20Token,
-      actionId: ExternalActionId = ExternalActionId.Transact,
-    ): Promise<FeeStructure | undefined> => {
-      if (!chainId || !token) return undefined;
+  useEffect(() => {
+    let isCancelled = false;
+
+    const fetch = async () => {
+      if (!chainId || !feeToken) return;
       try {
         setIsFeeLoading(true);
         const result = await getFeeStructure(
           chainId,
-          token.erc20TokenAddress,
-          [token.erc20TokenAddress],
+          feeToken.erc20TokenAddress,
+          tokenAddresses.filter((address) => address !== undefined),
           actionId,
         );
-        setFee(result.flatFee);
-        setFeeStructure(result);
-        return result;
+        if (!isCancelled) setFeeStructure(result);
       } catch {
-        setFee(null);
-        setFeeStructure(undefined);
-        return undefined;
+        if (!isCancelled) setFeeStructure(undefined);
       } finally {
-        setIsFeeLoading(false);
+        if (!isCancelled) setIsFeeLoading(false);
       }
-    },
-    [chainId],
-  );
+    };
+    fetch();
 
-  return { fee, feeStructure, isFeeLoading, calculateFee };
+    return () => {
+      isCancelled = true;
+    };
+  }, [chainId, feeToken, actionId, tokenAddresses]);
+
+  return { feeStructure, isFeeLoading };
 };

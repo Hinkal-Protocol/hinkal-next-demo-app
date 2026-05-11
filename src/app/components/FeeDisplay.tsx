@@ -1,7 +1,7 @@
 import { ERC20Token } from "@gurg/hi-test";
 
 interface FeeDisplayProps {
-  fee: bigint | null;
+  fee: bigint | undefined;
   isFeeLoading: boolean;
   selectedToken?: ERC20Token;
 }
@@ -11,7 +11,7 @@ export const FeeDisplay = ({
   isFeeLoading,
   selectedToken,
 }: FeeDisplayProps) => {
-  if (fee === null || !selectedToken) return null;
+  if (fee === undefined || !selectedToken) return null;
 
   return (
     <div className="text-gray-200 text-[12px] pl-[5%] mt-1">

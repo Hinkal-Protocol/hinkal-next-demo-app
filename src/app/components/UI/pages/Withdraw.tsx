@@ -6,7 +6,7 @@ import {
   useMemo,
 } from "react";
 import { toast } from "react-hot-toast";
-import { ERC20Token, FeeStructure } from "@gurg/hi-test";
+import { ERC20Token, ExternalActionId, FeeStructure } from "@gurg/hi-test";
 import { useAppContext } from "../../layouts/app";
 import { TokenAmountInput } from "../TokenAmountInput";
 import { Spinner } from "../Spinner";
@@ -19,7 +19,6 @@ import { useFee } from "../hooks/useFee";
 
 export const Withdraw = () => {
   const { hinkal, refreshBalances } = useAppContext();
-  const { fee, isFeeLoading, feeStructure, calculateFee } = useFee();
 
   const { withdraw, isProcessing } = useWithdraw({
     hinkal,
@@ -43,9 +42,16 @@ export const Withdraw = () => {
   const [isRelayerOff, setIsRelayerOff] = useState(false);
   const [showRelayerDetails, setShowRelayerDetails] = useState(false);
 
-  useEffect(() => {
-    if (selectedToken && withdrawAmount) calculateFee(selectedToken);
-  }, [selectedToken, withdrawAmount, calculateFee]);
+  const tokenAddresses = useMemo(
+    () => [selectedToken?.erc20TokenAddress],
+    [selectedToken],
+  );
+
+  const { isFeeLoading, feeStructure } = useFee(
+    selectedToken,
+    ExternalActionId.Transact,
+    tokenAddresses,
+  );
 
   const handleWithdraw = useCallback(() => {
     if (!selectedToken) return;
@@ -112,7 +118,7 @@ export const Withdraw = () => {
           />
         </div>
         <FeeDisplay
-          fee={fee}
+          fee={feeStructure?.flatFee}
           isFeeLoading={isFeeLoading}
           selectedToken={selectedToken}
         />

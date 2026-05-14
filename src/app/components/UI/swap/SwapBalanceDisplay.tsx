@@ -1,5 +1,5 @@
 import { ERC20Token } from "@gurg/hi-test";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAppContext } from "../../layouts/app";
 import { getAmountInToken } from "../../../utils/amount.utils";
 
@@ -12,7 +12,12 @@ export const SwapBalanceDisplay = ({
   token,
   onBalanceChange,
 }: SwapBalanceDisplayProps) => {
-  const { balances } = useAppContext();
+  const { privateBalancesWithUSD, chainId } = useAppContext();
+
+  const balances = useMemo(() => {
+    if (chainId === undefined) return [];
+    return privateBalancesWithUSD[chainId] ?? [];
+  }, [chainId, privateBalancesWithUSD]);
   const [balance, setBalance] = useState(0n);
 
   useEffect(() => {

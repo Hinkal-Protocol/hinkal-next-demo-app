@@ -23,7 +23,20 @@ const filterTokenBalances = (tokenBalances: TokenBalance[]) => {
 };
 
 export const WalletInfoDropDown = () => {
-  const { balances, hinkal, erc20List, isLoadingBalances } = useAppContext();
+  const { privateBalancesWithUSD, hinkal, erc20List, chainId } =
+    useAppContext();
+
+  const balances = useMemo(() => {
+    if (chainId === undefined) return [];
+    return privateBalancesWithUSD[chainId] ?? [];
+  }, [chainId, privateBalancesWithUSD]);
+
+  const isLoadingBalances = useMemo(() => {
+    if (!hinkal || chainId === undefined) return false;
+    const row = privateBalancesWithUSD[chainId];
+    if (row === undefined) return true;
+    return row.some((b) => b.isBalanceLoading);
+  }, [hinkal, chainId, privateBalancesWithUSD]);
 
   const nativeToken = useMemo(
     () => erc20List.find((t) => t.erc20TokenAddress === zeroAddress),
@@ -40,6 +53,10 @@ export const WalletInfoDropDown = () => {
 
   const handleCopyShieldedAddress = () => {
     try {
+      if (!hinkal) {
+        toast.error("Connect a wallet first");
+        return;
+      }
       const shieldedAddress = hinkal.getShieldedPublicKey();
       if (!shieldedAddress) {
         toast.error("No shielded address found");

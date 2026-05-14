@@ -2,10 +2,9 @@ import { useCallback, useState } from "react";
 import { ERC20Token, FeeStructure, Hinkal } from "@gurg/hi-test";
 import { useAppContext } from "../../layouts/app";
 import { getAmountInWei } from "../../../utils/amount.utils";
-import { Connector } from "wagmi";
 
 interface UseWithdrawProps {
-  hinkal: Hinkal<Connector>;
+  hinkal: Hinkal<unknown> | undefined;
   onSuccess?: () => void;
   onError?: (err: unknown) => void;
 }

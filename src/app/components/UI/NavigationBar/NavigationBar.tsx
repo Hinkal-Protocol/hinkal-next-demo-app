@@ -1,4 +1,4 @@
-import { AppTab } from "@/types/tabs";
+import { AppTab } from "../../../types";
 import { Dispatch, SetStateAction } from "react";
 
 interface NavigationBarProps {

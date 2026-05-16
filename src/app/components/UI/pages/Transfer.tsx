@@ -1,48 +1,53 @@
 import { SyntheticEvent, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { getErrorMessage, ERC20Token } from "@hinkal/common";
-import { useAppContext } from "../../layouts/app";
-import { TokenAmountInput } from "../TokenAmountInput";
 import { Spinner } from "../Spinner";
+import { TokenAmountInput } from "../TokenAmountInput";
+import { ERC20Token, ExternalActionId, FeeStructure } from "@gurg/hi-test";
 import { useTransfer } from "../hooks/useTransfer";
-import { BALANCE_REFRESH_DELAY_AFTER_TX } from "@/constants/balance-refresh-delay.constants";
+import { useFee } from "../hooks/useFee";
+import { FeeDisplay } from "../../FeeDisplay";
 
 export const Transfer = () => {
-  const { refreshBalances } = useAppContext();
-
   const { transfer, isProcessing } = useTransfer({
     onError: (err: Error) => {
-      const message = getErrorMessage(err);
-      if (message !== "Transaction failed") {
-        toast.error(message);
-      }
+      const message = err instanceof Error ? err.message : "Unknown error";
+      toast.error(message, { id: message });
     },
     onSuccess: async () => {
       toast.success(
-        "You have successfully transferred. Balance will update in several seconds"
+        "You have successfully transferred. Balance will update in several seconds",
       );
-      await refreshBalances(BALANCE_REFRESH_DELAY_AFTER_TX);
     },
   });
 
-  // local states
   const [selectedToken, setSelectedToken] = useState<ERC20Token | undefined>(
-    undefined
+    undefined,
   );
   const [transferAmount, setTransferAmount] = useState<string>("");
   const [transferAddress, setTransferAddress] = useState<string>("");
 
+  const tokenAddresses = useMemo(
+    () => [selectedToken?.erc20TokenAddress],
+    [selectedToken],
+  );
+
+  const { isFeeLoading, feeStructure } = useFee(
+    selectedToken,
+    ExternalActionId.Transact,
+    tokenAddresses,
+  );
+
   const handleTransfer = useCallback(() => {
-    if (!selectedToken) return;
-    transfer?.(selectedToken, transferAmount, transferAddress);
-  }, [selectedToken, transferAmount, transferAddress, transfer]);
+    if (!selectedToken || !feeStructure) return;
+    transfer?.(selectedToken, transferAmount, transferAddress, feeStructure);
+  }, [selectedToken, transferAmount, transferAddress, transfer, feeStructure]);
 
   /**
    * recipient address onChange handler
    * @param event onChange event  instance
    */
   const setTransferAddressHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setTransferAddress(event.target.value);
   };
@@ -53,7 +58,7 @@ export const Transfer = () => {
 
   const isDisabled = useMemo(
     () => !selectedToken || !transferAmount || !transferAddress || isProcessing,
-    [selectedToken, transferAmount, transferAddress, isProcessing]
+    [selectedToken, transferAmount, transferAddress, isProcessing],
   );
 
   return (
@@ -81,6 +86,11 @@ export const Transfer = () => {
         />
         <br />
       </div>
+      <FeeDisplay
+        fee={feeStructure?.flatFee}
+        isFeeLoading={isFeeLoading}
+        selectedToken={selectedToken}
+      />
       <div className="w-[90%] mx-auto mb-6 mt-6 h-[1px] bg-[#272B30]" />
       <div className=" border-solid ">
         <button

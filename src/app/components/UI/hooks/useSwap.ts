@@ -1,11 +1,7 @@
 import { useState, useCallback } from "react";
-import {
-  ERC20Token,
-  getAmountInWei,
-  hinkalSwap,
-  ExternalActionId,
-} from "@hinkal/common";
+import { ERC20Token, ExternalActionId, FeeStructure } from "@gurg/hi-test";
 import { useAppContext } from "../../layouts/app";
+import { getAmountInWei } from "../../../utils/amount.utils";
 
 type UseSwapOptions = {
   onError?: (error: Error) => void;
@@ -13,7 +9,7 @@ type UseSwapOptions = {
 };
 
 export const useSwap = ({ onError, onSuccess }: UseSwapOptions = {}) => {
-  const { hinkal } = useAppContext();
+  const { hinkal, chainId } = useAppContext();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const swap = useCallback(
@@ -22,12 +18,13 @@ export const useSwap = ({ onError, onSuccess }: UseSwapOptions = {}) => {
       tokenOut: ERC20Token,
       amountIn: string,
       expectedAmountOut: bigint,
-      fee: string
+      swapData: string,
+      feeStructure: FeeStructure,
     ) => {
       try {
         setIsProcessing(true);
 
-        if (!hinkal) throw new Error("Hinkal not initialized");
+        if (!hinkal || !chainId) throw new Error("Hinkal not initialized");
         if (!amountIn || parseFloat(amountIn) <= 0)
           throw new Error("Invalid amount");
         if (!expectedAmountOut || expectedAmountOut <= 0n)
@@ -35,13 +32,16 @@ export const useSwap = ({ onError, onSuccess }: UseSwapOptions = {}) => {
 
         const amountInWei = getAmountInWei(tokenIn, amountIn);
 
-        await hinkalSwap(
-          hinkal,
+        const tx = await hinkal.swap(
           [tokenIn, tokenOut],
           [-amountInWei, expectedAmountOut],
           ExternalActionId.Uniswap,
-          fee
+          swapData,
+          undefined,
+          feeStructure,
         );
+
+        await hinkal.waitForTransaction(chainId, tx);
 
         onSuccess?.();
       } catch (err) {
@@ -51,7 +51,7 @@ export const useSwap = ({ onError, onSuccess }: UseSwapOptions = {}) => {
         setIsProcessing(false);
       }
     },
-    [hinkal, onError, onSuccess]
+    [hinkal, chainId, onError, onSuccess],
   );
 
   return { swap, isProcessing };

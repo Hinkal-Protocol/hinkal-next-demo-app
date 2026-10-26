@@ -1,9 +1,16 @@
 import { http, createConfig } from "wagmi";
 import { metaMask, coinbaseWallet, walletConnect } from "wagmi/connectors";
-import { networkRegistry } from "@hinkal/common";
 import { mainnet, polygon, arbitrum, optimism, base } from "wagmi/chains";
 
 const chains = [mainnet, polygon, arbitrum, optimism, base] as const;
+
+const PUBLIC_RPC_URLS: Record<number, string> = {
+  [mainnet.id]: "https://ethereum-rpc.publicnode.com",
+  [polygon.id]: "https://polygon-bor-rpc.publicnode.com",
+  [arbitrum.id]: "https://arb1.arbitrum.io/rpc",
+  [optimism.id]: "https://mainnet.optimism.io",
+  [base.id]: "https://mainnet.base.org",
+};
 
 /*
 wagmi.config.ts runs on the server when imported. createConfig immediately
@@ -16,8 +23,7 @@ server, don't even create the config."
 
 export const wagmiConfig = typeof window === "undefined" ? null : (() => {
   const transports = chains.reduce((acc, chain) => {
-    const networkData = networkRegistry[chain.id];
-    acc[chain.id] = http(networkData?.fetchRpcUrl || undefined);
+    acc[chain.id] = http(PUBLIC_RPC_URLS[chain.id]);
     return acc;
   }, {} as Record<number, ReturnType<typeof http>>);
 
